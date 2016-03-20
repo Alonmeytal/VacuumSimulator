@@ -45,7 +45,7 @@ int main(int argc, char ** argv)
 
 	// declaring setting set;
 	Settings set;
-	// loading settings from file
+	// loading settings from file (to "set", sent by reference).
 	settingsFromFile(set, configPath + "config.ini");
 
 	// ! read all houses house files from ($housesPath)/*.house

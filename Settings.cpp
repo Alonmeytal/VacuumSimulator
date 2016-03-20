@@ -12,6 +12,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <cstdlib>
 
 using namespace std;
 
@@ -27,7 +28,7 @@ void settingsFromFile(Settings& set, string file)
     	{
     		continue;
     	}
-    	parameters[trim(tokens[0])] = stoi(tokens[1]);
+    	parameters[trim(tokens[0])] = atoi((char *)tokens[1]);
     }
 }
 
