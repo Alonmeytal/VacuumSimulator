@@ -10,6 +10,8 @@
 #include <string>
 #include "Point.h"
 
+using namespace std;
+
 class House {
 	int rows, cols;
 	string name, description;
