@@ -13,10 +13,10 @@
 using namespace std;
 
 class House {
+public:
 	int rows, cols;
 	string name, description;
 	char ** matrix;
-public:
 	House() :rows(0), cols(0), name("NONAME"), description("NONE"), matrix(nullptr) {};
 	House(string fileName);
 	void vacuum(int x, int y);
