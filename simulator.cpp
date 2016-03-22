@@ -8,7 +8,18 @@
 #include <iostream>
 #include <string>
 #include <list>
+
+// Interface(s) provided.
+#include "Direction.h"
+#include "SensorInformation.h"
+#include "AbstractSensor.h"
+#include "AbstractAlgorithm.h"
+// Actual Class(es)
+//#include "House.h"
+// Function Objects
 #include "Settings.h"
+//#include "HouseReader.h"
+//#include "Score.h"
 
 using namespace std;
 
@@ -48,11 +59,20 @@ int main(int argc, char ** argv)
 	// loading settings from file (to "set", sent by reference).
 	settingsFromFile(set, configPath + "config.ini");
 
+	// creating houses list
+	//list<House> houses;
+
 	// ! read all houses house files from ($housesPath)/*.house
+	//readHousesFromPath(housepathIndex, houses&);
 
 	// ! implement a simple algorithm for a cleaning robot.
+	// taken from recitation.
+
+	// Import other algorithms.
 
 	// ! run a simulation of the algorithm on the house
+
+	// ! return scoring table.
 
 	return 1;
 }
