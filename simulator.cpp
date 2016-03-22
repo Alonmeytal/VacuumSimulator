@@ -63,15 +63,25 @@ int main(int argc, char ** argv)
 	//list<House> houses;
 
 	// ! read all houses house files from ($housesPath)/*.house
-	//readHousesFromPath(housepathIndex, houses&);
+	//HouseReader reader(*houses);
+	//reader(housesPath);
 
 	// ! implement a simple algorithm for a cleaning robot.
 	// taken from recitation.
 
+
 	// Import other algorithms.
+	list<AbstractAlgorithm> algorithms;
 
 	// ! run a simulation of the algorithm on the house
-
+	/*
+	 * initialize scoring table (algorithms * houses)
+	 * for each houses:
+	 * 	for each algorithm:
+	 * 		create simulation instance - run algorithm on house. (return SimulationSteps)
+	 * 	calculate scores
+	 * 	save score into table
+	 */
 	// ! return scoring table.
 
 	return 1;
