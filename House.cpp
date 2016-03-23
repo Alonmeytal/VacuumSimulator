@@ -9,6 +9,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <cstring>
 
 using namespace std;
 
@@ -18,7 +19,7 @@ House::House(string fileName) {
 	getline(fin, h.name); // Reading house name
 	getline(fin, h.description); // Reading house description
 	fin >> h.rows; // Reading house rows
-	fin >> h.cols; // Reading house cols
+	fin >> h.cols; // Reading house col(um)s
 	fin.ignore(); // Skipping newline and going to the beginning of the matrix
 	h.matrix = new char[h.rows][h.cols];
 	string row;
@@ -29,7 +30,13 @@ House::House(string fileName) {
 		{
 			h.matrix[i][j] = row[j];
 			if (row[j] == 'D')
+			{
 				h.dockingPoint = Point(i,j);
+			}
+			else if ((row[j] >= '1') && (row[j] <= '9'))
+			{
+				h.dirt += atoi((char *) row[j]);
+			}
 		}
 	}
 }

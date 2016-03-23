@@ -15,7 +15,7 @@
 #include "AbstractSensor.h"
 #include "AbstractAlgorithm.h"
 // Actual Class(es)
-//#include "House.h"
+#include "House.h"
 // Function Objects
 #include "Settings.h"
 //#include "HouseReader.h"
@@ -55,9 +55,9 @@ int main(int argc, char ** argv)
 	// ! load setting from ($configPath)/config.ini
 
 	// declaring setting set;
-	Settings set;
+	map<string, int> settings;
 	// loading settings from file (to "set", sent by reference).
-	settingsFromFile(set, configPath + "config.ini");
+	settingsFromFile(setting, configPath + "config.ini");
 
 	// creating houses list
 	//list<House> houses;

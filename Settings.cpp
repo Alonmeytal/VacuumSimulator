@@ -16,9 +16,8 @@
 
 using namespace std;
 
-void settingsFromFile(Settings& set, string file)
+void settingsFromFile(map<string,int>& set, string file)
 {
-	map<string, int> parameters;
     ifstream fin(file.c_str());
     string line;
     while (getline(fin, line))
@@ -28,7 +27,7 @@ void settingsFromFile(Settings& set, string file)
     	{
     		continue;
     	}
-    	parameters[trim(tokens[0])] = atoi((char *)tokens[1]);
+    	set[trim(tokens[0])] = atoi((char *) tokens[1]);
     }
 }
 

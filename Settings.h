@@ -9,9 +9,11 @@
 #define SETTINGS_H_
 
 #include <string>
+#include <map>
 #include <vector>
-using namespace std;
 
+using namespace std;
+/*
 typedef struct _Settings
 {
 	int maxSteps;
@@ -19,9 +21,9 @@ typedef struct _Settings
 	int batteryCapacity;
 	int batteryConsumptionRate;
 	int batteryRechargeRate;
-} Settings;
+} Settings;*/
 
-void settingsFromFile(Settings& set, string file);
+void settingsFromFile(map<string,int>& set, string file);
 string trim(string& str);
 vector<string> split(const string &s, char delim);
 
