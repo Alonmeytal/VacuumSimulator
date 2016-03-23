@@ -11,7 +11,7 @@
 class Point {
 	int x, y;
 public:
-	Point(int _x, int _y) : x(_x), y(_y) { }
+	Point(int _x, int _y) : x(_x), y(_y) {}
 	Point distance(const Point& other)const { return Point(x - other.x, y -other.y); }
 	int getX() { return x; }
 	int getY() { return y; }

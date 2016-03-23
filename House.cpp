@@ -28,6 +28,8 @@ House::House(string fileName) {
 		for (int j = 0; j < h.cols; j++)
 		{
 			h.matrix[i][j] = row[j];
+			if (row[j] == 'D')
+				h.dockingPoint = Point(i,j);
 		}
 	}
 }
