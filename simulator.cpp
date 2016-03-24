@@ -19,7 +19,7 @@
 // Function Objects
 #include "Settings.h"
 //#include "HouseReader.h"
-//#include "Score.h"
+#include "Score.h"
 
 using namespace std;
 
