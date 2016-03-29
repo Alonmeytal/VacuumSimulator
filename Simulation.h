@@ -7,20 +7,26 @@
 
 #ifndef SIMULATION_H_
 #define SIMULATION_H_
+#include "AbstractAlgorithm.h"
+#include "AbstractSensor.h"
+#include "Point.h"
 
 class Simulation
 {
 	AbstractAlgorithm algorithm;
 	House house;
-	Settings * set;
+	map<string, int> * settings;
 
 	int steps; // steps taken so far.
 	int batteryMode; // how much charge is left in the robot.
+	int dirtCollected; // dirt collected so far.
 	bool hasFinished; // flag for when the robot finishes cleaning.
-	point currentLocation; // robot's current location.
+	Point currentLocation; // robot's current location.
 	AbstractSensor sesnor;
 
-	Simulation(AbstractAlgoritm algo, House home, Settings s) : algorithm(algo), house(home), set(s) {
+	Simulation(AbstractAlgoritm algo, House home, map<string,int> * s) :
+		steps(0), batteryMode(0), dirtCollected(0), hasFinished(false), algorithm(algo), house(home), settings(s), currentLocation(home.dockingPoint), sensor(nullptr)
+	{
 		// TO-DO : fill other class memebers.
 		// sensor(&house, &currentLocation);
 	}

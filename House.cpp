@@ -14,7 +14,7 @@
 using namespace std;
 
 House::House(string fileName) {
-	House h = House(); // creating new "empty" house using empty c'tor
+	House h = new House(); // creating new "empty" house using empty c'tor
 	ifstream fin(fileName); // opening file-stream to ($fileName) containing the house
 	getline(fin, h.name); // Reading house name
 	getline(fin, h.description); // Reading house description
@@ -39,6 +39,22 @@ House::House(string fileName) {
 			}
 		}
 	}
+}
+House::House(const House & otherHouse){
+	House h = new House();
+	h.cols = otherHouse.cols;
+	h.rows = otherHouse.rows;
+	h.name = otherHouse.name;
+	h.description = otherHouse.description;
+	h.matrix = new char[h.rows][h.cols];
+	for (int i = 0; i < h.rows; i++)
+	{
+		for (int j = 0; j < h.cols; j++)
+		{
+			h.matrix[i][j] = otherHouse.matrix[i][j];
+		}
+	}
+	h.dockingPoint = Point(otherHouse.dockingPoint);
 }
 
 void House::print() {
