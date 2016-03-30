@@ -1,8 +1,9 @@
 /*
- * Point.cpp
+ * username1: alonmeytal
+ * ID1: 203972419
  *
- *  Created on: Mar 22, 2016
- *      Author: alonmeytal
+ * username2:chenanily
+ * ID2:305008864
  */
 
 #include "Point.h"

@@ -1,8 +1,9 @@
 /*
- * SimpleAlgorithm.cpp
+ * username1: alonmeytal
+ * ID1: 203972419
  *
- *  Created on: Mar 30, 2016
- *      Author: alonmeytal
+ * username2:chenanily
+ * ID2:305008864
  */
 
 #include <map>
