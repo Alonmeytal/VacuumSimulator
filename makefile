@@ -25,7 +25,7 @@ SimpleAlgorithm.o : SimpleAlgorithm.cpp Direction.h AbstractAlgorithm.h Sensor.h
 Simulation.o : Simulation.h Simulation.cpp Direction.h AbstractSensor.h AbstractAlgorithm.h Point.h
 	$(CC) $(CFLAGS) Simulation.cpp
 
-simulator.o : simulator.cpp Direction.h SensorInformation.h AbstractSensor.h AbstractAlgorith.h House.h RealTimeInfo.h SimpleAlgorithm.h Settings.h HouseReader.h Score.h
+simulator.o : simulator.cpp Direction.h SensorInformation.h AbstractSensor.h AbstractAlgorithm.h House.h Settings.h HouseReader.h Score.h
 	$(CC) $(CFLAGS) simulator.cpp
 
 clean:
