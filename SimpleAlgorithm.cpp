@@ -33,10 +33,11 @@ class SimpleAlgorithm: public AbstractAlgorithm {
 		int direction = rand()%5;
 		while (!inf.isWall[direction = rand()%5]);
 		steps++;
-		return Direction[direction];
+		return (Direction)direction;
 	}
 
 	void setConfiguration(map<string, int> config) { settings = config; }
 
-	void setSensor(const AbstractSensor& sensor) { s = &sensor; }
+	//void setSensor(const AbstractSensor& sensor) { s = &sensor; }
+	void setSensor(AbstractSensor& sensor) { s = &sensor; }
 };

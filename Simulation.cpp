@@ -41,6 +41,8 @@ int Simulation::runStep(){
 		case Direction::West:
 			currentLocation.left();
 			break;
+		case Direction::Stay: //we're doing nothing but just a reminder that is an option
+			break;
 	}
 	if (house->matrix[currentLocation->y][currentLocation->x] == 'D' && dirtCollected==house.dirt){
 		this->hasFinished = true;
