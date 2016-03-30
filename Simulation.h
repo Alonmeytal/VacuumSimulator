@@ -11,6 +11,7 @@
 #include "AbstractSensor.h"
 #include "Point.h"
 #include "Direction.h"
+#include "House.h"
 
 class Simulation
 {
