@@ -7,14 +7,14 @@
 using namespace std;
 
 int Simulation::runStep(){
-	if (this.hasFinished) {
+	if (this->hasFinished) {
 		return 2;
 	}
 	if (batteryMode == 0) {
 		return -1;
 	}
 	SensorInformation currentSensorInfo;
-	currentSensorInfo = sensor.Sense();
+	currentSensorInfo = sensor::Sense();
 	Direction wantedDir = algorithm::Step();
 
 	if (currentSensorInfo->isWall[wantedDir]) {
@@ -22,7 +22,7 @@ int Simulation::runStep(){
 	}
 	//there is enough battery and next step is not a wall, so we are moving
 	if (currentSensorInfo->dirtLevel > 0){
-		house:vacuum(currentLocation->x, currentLocation->y);
+		house::vacuum(currentLocation->x, currentLocation->y);
 	}
 	steps++;
 	batteryMode--;
@@ -43,7 +43,7 @@ int Simulation::runStep(){
 			break;
 	}
 	if (house->matrix[currentLocation->y][currentLocation->x] == 'D' && dirtCollected==house.dirt){
-		this.hasFinished = true;
+		this->hasFinished = true;
 		return 1;
 	}
 	return 0;

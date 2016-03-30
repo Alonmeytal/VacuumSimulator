@@ -25,7 +25,7 @@ class Simulation
 	Point currentLocation; // robot's current location.
 	AbstractSensor * sensor;
 
-	Simulation(AbstractAlgorithm * algo, House home, map<string,int> * s) :
+	Simulation(AbstractAlgoritm * algo, House home, map<string,int> * s) :
 		steps(0), batteryMode(s["batteryCapacity"]), dirtCollected(0), hasFinished(false), algorithm(algo), house(home), settings(s), currentLocation(home.dockingPoint), sensor(nullptr)
 	{
 		// TO-DO : fill other class memebers.
