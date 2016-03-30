@@ -14,8 +14,8 @@ int Simulation::runStep(){
 		return -1;
 	}
 	SensorInformation currentSensorInfo;
-	currentSensorInfo = sensor::Sense();
-	Direction wantedDir = algorithm::Step();
+	currentSensorInfo = sensor->sense();
+	Direction wantedDir = algorithm->step();
 
 	if (currentSensorInfo->isWall[wantedDir]) {
 		return -1;
