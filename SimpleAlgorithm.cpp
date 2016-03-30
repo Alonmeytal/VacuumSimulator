@@ -13,7 +13,7 @@
 
 class SimpleAlgorithm: public AbstractAlgorithm {
 	map<string,int> settings;
-	AbstractSensor * s;
+	const AbstractSensor * s;
 	int steps;
 
 	SimpleAlgorithm() : s(nullptr), steps(0) {}
@@ -38,6 +38,5 @@ class SimpleAlgorithm: public AbstractAlgorithm {
 
 	void setConfiguration(map<string, int> config) { settings = config; }
 
-	//void setSensor(const AbstractSensor& sensor) { s = &sensor; }
-	void setSensor(AbstractSensor& sensor) { s = &sensor; }
+	void setSensor(const AbstractSensor& sensor) { s = &sensor; }
 };
