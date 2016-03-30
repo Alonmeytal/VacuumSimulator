@@ -37,7 +37,7 @@ public:
 		// TO-DO : fill other class memebers.
 		batteryMode = s->find("BatteryCapacity")->second;
 		sensor = new Sensor(&house, &currentLocation);
-		algo->setSensor(sensor);
+		algo->setSensor(*sensor);
 	}
 
 	int runStep(); // runs the algorithm for a single step, updating currentLocation, batteryMode, and house dirt-levels.
