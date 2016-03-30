@@ -10,6 +10,7 @@
 #include <list>
 #include <array>
 #include <algorithm>
+#include <cstring>
 using namespace std;
 
 // Interface(s) provided.
@@ -75,7 +76,21 @@ int main(int argc, char ** argv)
 	coded.description = "2 Bedrooms + Kitchen Isle";
 	coded.rows = 8;
 	coded.cols = 10;
-	coded.matrix = {"WWWWWWWWWW","W22  DW59W","W  W 1119W","W WWW3WW W","W6   3W  W","W78W  W  W","W99W  W  W","WWWWWWWWWW"};
+	coded.matrix = new char*[8];
+	for (i = 0; i < coded.rows; i++)
+	{
+		coded.matrix[i] = new char[coded.cols];
+	}
+	strcpy(coded.matrix[0],"WWWWWWWWWW"); //{'W','W','W','W','W','W','W','W','W','W'};//"WWWWWWWWWW";
+	strcpy(coded.matrix[1],"W22  DW59W");// = {'W','2','2',' ',' ','D','W','5','9','W'};
+	strcpy(coded.matrix[2],"W  W 1119W"); // = {'W',' ',' ','W',' ','1','1','1','9','W'};
+	strcpy(coded.matrix[3],"W WWW3WW W"); // = {'W',' ','W','W','W','3','W','W',' ','W'};
+	strcpy(coded.matrix[4],"W6   3W  W"); // = {'W','6',' ',' ',' ','3','W',' ',' ','W'};
+	strcpy(coded.matrix[5],"W78W  W  W"); // = {'W','7','8','W',' ',' ','W',' ',' ','W'};
+	strcpy(coded.matrix[6],"W99W  W  W"); // = {'W','9','9','W',' ',' ','W',' ',' ','W'};
+	strcpy(coded.matrix[7],"WWWWWWWWWW"); // = {'W','W','W','W','W','W','W','W','W','W'};
+
+	//coded.matrix = {"WWWWWWWWWW","W22  DW59W","W  W 1119W","W WWW3WW W","W6   3W  W","W78W  W  W","W99W  W  W","WWWWWWWWWW"};
 	coded.dockingPoint = Point(5,2);
 	if (coded.isValid())
 	{
