@@ -34,7 +34,7 @@ public:
 		}
 		int direction;
 		SensorInformation inf = s->sense();
-		while (!inf.isWall[direction = std::rand()%5]);
+		while (inf.isWall[direction = std::rand()%5]);
 		steps++;
 		return (Direction)direction;
 	}
