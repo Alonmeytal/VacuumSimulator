@@ -254,7 +254,7 @@ int main(int argc, char ** argv)
 			// for each house.
 			// print "[<House Short Name>]\t<Score>\n".
 			//cout << "[" << h.name << "]\t" << simulationScores[j][i] << endl;
-			cout << simulationScores[j][i]; // required for Targil 1 only.
+			cout << simulationScores[j][i] << endl; // required for Targil 1 only.
 			j++;
 		}
 	}

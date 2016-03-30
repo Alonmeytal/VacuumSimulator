@@ -83,12 +83,12 @@ bool House::isValid() {
 	for (i = 0; i < cols; i++)
 	{
 		matrix[0][i] = 'W';
-		matrix[cols-1][i] = 'W';
+		matrix[rows-1][i] = 'W';
 	}
 	for (i = 0; i < rows; i++)
 	{
 		matrix[i][0] = 'W';
-		matrix[i][rows-1] = 'W';
+		matrix[i][cols-1] = 'W';
 	}
 
 	// searching for one and only one docking point
