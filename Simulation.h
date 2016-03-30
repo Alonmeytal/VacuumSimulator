@@ -10,6 +10,7 @@
 #include "AbstractAlgorithm.h"
 #include "AbstractSensor.h"
 #include "Point.h"
+#include "Direction.h"
 
 class Simulation
 {
@@ -25,7 +26,7 @@ class Simulation
 	AbstractSensor sesnor;
 
 	Simulation(AbstractAlgoritm algo, House home, map<string,int> * s) :
-		steps(0), batteryMode(0), dirtCollected(0), hasFinished(false), algorithm(algo), house(home), settings(s), currentLocation(home.dockingPoint), sensor(nullptr)
+		steps(0), batteryMode(s->batteryCapacity), dirtCollected(0), hasFinished(false), algorithm(algo), house(home), settings(s), currentLocation(home.dockingPoint), sensor(nullptr)
 	{
 		// TO-DO : fill other class memebers.
 		// sensor(&house, &currentLocation);

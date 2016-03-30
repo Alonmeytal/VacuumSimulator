@@ -2,6 +2,7 @@
 #include "Sensor.h"
 #include "House.h"
 #include "Point.h"
+#include "Direction.h"
 
 using namespace std;
 
