@@ -7,31 +7,25 @@ LFLAGS = -Wall $(DEBUG)
 simulator : $(OBJS)
 	$(CC) $(LFLAGS) $(OBJS) -o simulator
 
-Point.o : include/Point.h Point.cpp
+Point.o : Point.h Point.cpp
 	$(CC) $(CFLAGS) Point.cpp
 
-House.o : include/House.h House.cpp include/Point.h
+House.o : House.h House.cpp Point.h
 	$(CC) $(CFLAGS) House.cpp
 
-Sensor.o : include/Sensor.h Sensor.cpp include/AbstractSensor.h include/House.h includ/Point.h
+Sensor.o : Sensor.h Sensor.cpp AbstractSensor.h House.h Point.h
 	$(CC) $(CFLAGS) Sensor.cpp
 
-Settings.o : include/Settings.h Settings.cpp
+Settings.o : Settings.h Settings.cpp
 	$(CC) $(CFLAGS) Settings.cpp
 
-	SimulationOnHouse.o : include/SimulationOnHouse.h SimulationOnHouse.cpp include/Direction.h include/Coordinate.h include/House.h include/SensorInformation.h include/SimulationSensor.h include/RealTimeInfo.h include/AlgorithmSimulation.h
-		$(CC) $(CFLAGS) SimulationOnHouse.cpp
-		
-	SimulationSensor.o : include/SimulationSensor.h SimulationSensor.cpp include/AbstractSensor.h include/SensorInformation.h
-		$(CC) $(CFLAGS) SimulationSensor.cpp
-
-SimpleAlgorithm.o : SimpleAlgorithm.cpp include/Direction.h include/AbstractAlgorithm.h include/Sensor.h
+SimpleAlgorithm.o : SimpleAlgorithm.cpp Direction.h AbstractAlgorithm.h Sensor.h
 	$(CC) $(CFLAGS) SimpleAlgorithm.cpp
 
-Simulation.o : include/Simulation.h Simulation.cpp include/Direction.h include/AbstractSensor.h include/AbstractAlgorithm.h include/Point.h
+Simulation.o : Simulation.h Simulation.cpp Direction.h AbstractSensor.h AbstractAlgorithm.h Point.h
 	$(CC) $(CFLAGS) Simulation.cpp
 
-simulator.o : simulator.cpp include/Direction.h include/SensorInformation.h include/AbstractSensor.h include/AbstractAlgorith.h include/House.h include/RealTimeInfo.h include/SimpleAlgorithm.h include/Settings.h include/HouseReader.h include/Score.h
+simulator.o : simulator.cpp Direction.h SensorInformation.h AbstractSensor.h AbstractAlgorith.h House.h RealTimeInfo.h SimpleAlgorithm.h Settings.h HouseReader.h Score.h
 	$(CC) $(CFLAGS) simulator.cpp
 
 clean:
