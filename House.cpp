@@ -6,6 +6,7 @@
  */
 
 #include "House.h"
+#include "Point.h"
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -13,48 +14,48 @@
 
 using namespace std;
 
-House::House(string fileName) {
-	House h = new House(); // creating new "empty" house using empty c'tor
+House::House(string fileName) : House() {
 	ifstream fin(fileName); // opening file-stream to ($fileName) containing the house
-	getline(fin, h.name); // Reading house name
-	getline(fin, h.description); // Reading house description
-	fin >> h.rows; // Reading house rows
-	fin >> h.cols; // Reading house col(um)s
+	getline(fin, name); // Reading house name
+	getline(fin, description); // Reading house description
+	fin >> rows; // Reading house rows
+	fin >> cols; // Reading house col(um)s
 	fin.ignore(); // Skipping newline and going to the beginning of the matrix
-	h.matrix = new char[h.rows][h.cols];
+	matrix = new char*[rows];
 	string row;
-	for (int i = 0; i < h.rows; i++)
+	for (int i = 0; i < rows; i++)
 	{
+		matrix[i] = new char[cols];
 		getline(fin, row); //h.matrix[i]);
-		for (int j = 0; j < h.cols; j++)
+		for (int j = 0; j < cols; j++)
 		{
-			h.matrix[i][j] = row[j];
+		matrix[i][j] = row[j];
 			if (row[j] == 'D')
 			{
-				h.dockingPoint = Point(i,j);
+				dockingPoint = Point(i,j);
 			}
 			else if ((row[j] >= '1') && (row[j] <= '9'))
 			{
-				h.dirt += atoi((char *) row[j]);
+				dirt += atoi((char *) row[j]);
 			}
 		}
 	}
 }
-House::House(const House & otherHouse){
-	House h = new House();
-	h.cols = otherHouse.cols;
-	h.rows = otherHouse.rows;
-	h.name = otherHouse.name;
-	h.description = otherHouse.description;
-	h.matrix = new char[h.rows][h.cols];
-	for (int i = 0; i < h.rows; i++)
+House::House(const House & otherHouse) : House() {
+	cols = otherHouse.cols;
+	rows = otherHouse.rows;
+	name = otherHouse.name;
+	description = otherHouse.description;
+	matrix = new char*[rows];
+	for (int i = 0; i < rows; i++)
 	{
-		for (int j = 0; j < h.cols; j++)
+		matrix[i] = new char[cols];
+		for (int j = 0; j < cols; j++)
 		{
-			h.matrix[i][j] = otherHouse.matrix[i][j];
+			matrix[i][j] = otherHouse.matrix[i][j];
 		}
 	}
-	h.dockingPoint = Point(otherHouse.dockingPoint);
+	dockingPoint = Point(otherHouse.dockingPoint);
 }
 
 void House::print() {

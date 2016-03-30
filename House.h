@@ -21,7 +21,7 @@ public:
 	Point dockingPoint; // Point representing the co-ordinates of 'D' in the house.
 
 	// empty constructor.
-	House() :rows(0), cols(0), dirt(0), name("NONAME"), description("NONE"), matrix(nullptr), dockingPoint(NULL) {};
+	House() :rows(0), cols(0), dirt(0), name("NONAME"), description("NONE"), matrix(nullptr), dockingPoint(Point(0,0)) {};
 	// copy constructor.
 	House(const House& otherHouse);
 	// from *.house file constructor.
