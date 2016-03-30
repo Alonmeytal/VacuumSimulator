@@ -8,50 +8,51 @@
 #include "Sensor.h"
 #include "House.h"
 #include "Point.h"
+#include "Direction.h"
 #include <string>
 
 using namespace std;
 
 SensorInformation Sensor::sense() {
-	SensorInformation * inf = new SensorInformation;
+	SensorInformation inf;
 
 	// Assuming the currentLocation is always inside walls, and so moving -/+1 from currentLocation is still in matrix boundaries.
 	// Checking the possibility to go up.
-	if (house->matrix[currentLocation->y + 1][currentLocation->x] == 'W')
+	if (house->matrix[currentLocation->getY() + 1][currentLocation->getX()] == 'W')
 	{
-		inf->isWall[Direction::North] = true;
+		inf.isWall[(int)Direction::North] = true;
 	}
 	else
 	{
-		inf->isWall[Direction::North] = false;
+		inf.isWall[(int)Direction::North] = false;
 	}
 	// down
-	if (house->matrix[currentLocation->y - 1][currentLocation->x] == 'W')
+	if (house->matrix[currentLocation->getY() - 1][currentLocation->getX()] == 'W')
 	{
-		inf->isWall[Direction::South] = true;
+		inf.isWall[(int)Direction::South] = true;
 	}
 	else
-		inf->isWall[Direction::South] = false;
+		inf.isWall[(int)Direction::South] = false;
 	// right
-	if (house->matrix[currentLocation->y][currentLocation->x + 1] == 'W')
+	if (house->matrix[currentLocation->getY()][currentLocation->getX() + 1] == 'W')
 	{
-		inf->isWall[Direction::East] = true;
+		inf.isWall[(int)Direction::East] = true;
 	}
 	else
 	{
-		inf->isWall[Direction::East] = false;
+		inf.isWall[(int)Direction::East] = false;
 	}
 	// left
-	if (house->matrix[currentLocation->y][currentLocation->x - 1] == 'W')
+	if (house->matrix[currentLocation->getY()][currentLocation->getX() - 1] == 'W')
 	{
-		inf->isWall[Direction::West] = true;
+		inf.isWall[(int)Direction::West] = true;
 	}
 	else
 	{
-		inf->isWall[Direction::West] = false;
+		inf.isWall[(int)Direction::West] = false;
 	}
 	// finding out how much dirt is at currentLocation.
-	inf->dirtLevel = atoi(house->matrix[currentLocation->y][currentLocation->x]);
+	inf.dirtLevel = (house->matrix[currentLocation->getY()][currentLocation->getX()] - '0');
 
 	return inf;
 }

@@ -152,6 +152,7 @@ int main(int argc, char ** argv)
 						simulationSteps[i][j] = -1;
 						cout << "algorithm " << j << " has made a mistake." << endl;
 						failedRobots++;
+						positionInCompetition[j] = 10;
 						break;
 					case 1 :
 						// algorithm finished.
@@ -194,7 +195,7 @@ int main(int argc, char ** argv)
 		{
 			if (simulationSteps[i][j] <= 0)
 			{
-				// robot did not finish, or made a mistake (-1)
+				// robot did not finish
 				simulationSteps[i][j] = stepsTaken;
 			}
 		}
@@ -208,7 +209,7 @@ int main(int argc, char ** argv)
 		j = 0;
 		for (Simulation sim = simulationsList.begin();sim != simulationsList.end(); sim++)
 		{
-			simulationScores[i][j] = score(std::min(4,positionInCompetition[j]), winnerSteps,
+			simulationScores[i][j] = score(positionInCompetition[j] == 10 ? 10 : std::min(4,positionInCompetition[j]), winnerSteps,
 					simulationSteps[i][j], currentHouse.dirt, sim.dirtCollected,  sim.hasFinished);
 			j++;
 		}
@@ -228,7 +229,8 @@ int main(int argc, char ** argv)
 		{
 			// for each house.
 			// print "[<House Short Name>]\t<Score>\n".
-			cout << "[" << h.name << "]\t" << simulationScores[j][i] << endl;
+			//cout << "[" << h.name << "]\t" << simulationScores[j][i] << endl;
+			cout << simulationScores[j][i]; // required for Targil 1 only.
 			j++;
 		}
 	}

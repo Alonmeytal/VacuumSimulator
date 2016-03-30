@@ -10,7 +10,6 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include <cstring>
 
 using namespace std;
 
@@ -36,7 +35,7 @@ House::House(string fileName) : House() {
 			}
 			else if ((row[j] >= '1') && (row[j] <= '9'))
 			{
-				dirt += atoi((char *) row[j]);
+				dirt += (row[j] - '0');
 			}
 		}
 	}

@@ -16,7 +16,7 @@ class Sensor: public AbstractSensor {
 	House * house;
 	Point * currentLocation;
 public:
-	Sensor(House * h, Point location) : house(h), currentLocation(location) { }
+	Sensor(House * h, Point * location) : house(h), currentLocation(location) { }
 	virtual SensorInformation sense();
 	virtual ~Sensor();
 };
