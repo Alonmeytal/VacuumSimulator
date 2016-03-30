@@ -14,7 +14,7 @@
 
 class Simulation
 {
-	AbstractAlgorithm algorithm;
+	AbstractAlgorithm * algorithm;
 	House house;
 	map<string, int> * settings;
 
@@ -23,10 +23,10 @@ class Simulation
 	int dirtCollected; // dirt collected so far.
 	bool hasFinished; // flag for when the robot finishes cleaning.
 	Point currentLocation; // robot's current location.
-	AbstractSensor sensor;
+	AbstractSensor * sensor;
 
-	Simulation(AbstractAlgoritm algo, House home, map<string,int> * s) :
-		steps(0), batteryMode(s->batteryCapacity), dirtCollected(0), hasFinished(false), algorithm(algo), house(home), settings(s), currentLocation(home.dockingPoint), sensor(nullptr)
+	Simulation(AbstractAlgoritm * algo, House home, map<string,int> * s) :
+		steps(0), batteryMode(s["batteryCapacity"]), dirtCollected(0), hasFinished(false), algorithm(algo), house(home), settings(s), currentLocation(home.dockingPoint), sensor(nullptr)
 	{
 		// TO-DO : fill other class memebers.
 		// sensor(&house, &currentLocation);
