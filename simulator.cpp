@@ -19,6 +19,7 @@ using namespace std;
 #include "AbstractAlgorithm.h"
 // Actual Class(es)
 #include "House.h"
+#include "SimpleAlgorithm.cpp"
 // Function Objects
 #include "Settings.h"
 #include "HouseReader.h"
@@ -66,6 +67,15 @@ int main(int argc, char ** argv)
 	// ! read all houses house files from ($housesPath)/*.house
 	//HouseReader reader(*houses);
 	//reader(housesPath);
+	// Hard coded house
+	House coded = new House();
+	coded.name = "Simple1";
+	coded.description = "2 Bedrooms + Kitchen Isle";
+	coded.rows = 8;
+	coded.cols = 10;
+	coded.matrix = {"WWWWWWWWWW","W22  DW59W","W  W 1119W","W WWW3WW W","W6   3W  W","W78W  W  W","W99W  W  W","WWWWWWWWWW"};
+	coded.dockingPoint = new Point(5,2);
+	houses.push_back(coded);
 
 	// ! implement a simple algorithm for a cleaning robot.
 	// taken from recitation.
@@ -74,6 +84,8 @@ int main(int argc, char ** argv)
 	list<AbstractAlgorithm> algorithms;
 
 	// load all algorithms to list;
+	SimpleAlgorithm simpson;
+	algorithms.push_back(simpson);
 
 	// ! run a simulation of the algorithm on the house
 	list<Simulation> simulationsList;

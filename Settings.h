@@ -13,15 +13,6 @@
 #include <vector>
 
 using namespace std;
-/*
-typedef struct _Settings
-{
-	int maxSteps;
-	int maxStepsAfterWinner;
-	int batteryCapacity;
-	int batteryConsumptionRate;
-	int batteryRechargeRate;
-} Settings;*/
 
 void settingsFromFile(map<string,int>& set, string file);
 string trim(string& str);
