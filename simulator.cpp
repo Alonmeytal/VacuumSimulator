@@ -1,5 +1,5 @@
 /*
- * simulator.cpp
+  * simulator.cpp
  *
  *  Created on: Mar 18, 2016
  *      Author: alonmeytal
@@ -116,7 +116,7 @@ int main(int argc, char ** argv)
 	for (House currentHouse = houses.begin(); currentHouse != houses.end(); currentHouse++)
 	{
 		// for each algorithm;
-		for (AbstractAlgorithm currentAlgorithm = algorithms.begin(); currentAlgorithm != algorithms.end(); currentAlgorithm++)
+		for (AbstractAlgorithm * currentAlgorithm = algorithms.begin(); currentAlgorithm != algorithms.end(); currentAlgorithm++)
 		{
 			// create a simulation instance that will run currentAlgorithm on currentHouse;
 			simulationsList.push_back(Simulation(currentAlgorithm, currentHouse, &settings));
