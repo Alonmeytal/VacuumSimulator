@@ -27,6 +27,7 @@ public:
 	// from *.house file constructor.
 	House(string fileName);
 
+	bool isValid();
 	void vacuum(int x, int y); // lower the dirt level at [x,y].
 	void print(); // print the house to std::cout.
 	virtual ~House(); // deconstructor.

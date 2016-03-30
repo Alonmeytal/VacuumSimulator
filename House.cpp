@@ -77,6 +77,42 @@ void House::vacuum(int x, int y){
 		matrix[y][x]--;
 }
 
+bool House::isValid() {
+	// rewriting boundaries into walls.
+	int i, j;
+	for (i = 0; i < cols; i++)
+	{
+		matrix[0][i] = 'W';
+		matrix[cols-1][i] = 'W';
+	}
+	for (i = 0; i < rows; i++)
+	{
+		matrix[i][0] = 'W';
+		matrix[i][rows-1] = 'W';
+	}
+
+	// searching for one and only one docking point
+	// going over the inside only (since boundaries have been fixed)
+	int dockCount = 0;
+	for (i = 1; i < rows - 1; i++)
+	{
+		for (j = 1; j < cols - 1; j++)
+		{
+			if (matrix[i][j] == 'D')
+			{
+				dockCount++;
+			}
+			else if ((matrix[i][j] <= '0' || matrix[i][j] > '9') && (matrix[i][j] != 'W'))
+			{
+				// cell isn't a docking point(D), a dirt level (0-9) or a wall (W)
+				matrix[i][j] = ' ';
+			}
+		}
+	}
+	if (dockCount > 1)
+		return false;
+	return true;
+}
 House::~House() {
 	delete matrix;
 }

@@ -75,7 +75,10 @@ int main(int argc, char ** argv)
 	coded.cols = 10;
 	coded.matrix = {"WWWWWWWWWW","W22  DW59W","W  W 1119W","W WWW3WW W","W6   3W  W","W78W  W  W","W99W  W  W","WWWWWWWWWW"};
 	coded.dockingPoint = new Point(5,2);
-	houses.push_back(coded);
+	if (coded.isValid())
+	{
+		houses.push_back(coded);
+	}
 
 	// ! implement a simple algorithm for a cleaning robot.
 	// taken from recitation.
@@ -197,6 +200,7 @@ int main(int argc, char ** argv)
 			{
 				// robot did not finish
 				simulationSteps[i][j] = stepsTaken;
+				positionInCompetition[j] = 10;
 			}
 		}
 		// if winner was not found, winnerSteps should be simulationSteps (stepsTaken).
