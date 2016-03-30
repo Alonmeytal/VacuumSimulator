@@ -12,10 +12,10 @@ class Point {
 	int x, y;
 public:
 	Point(int _x, int _y): x(_x), y(_y) {}
-	Point(const Point& p): Point(p.getX(),p.getY()) {}
+	Point(const Point& p) : x(p.getX()), y(p.getY()) {}
 	Point distance(const Point& other)const { return Point(x - other.x, y -other.y); }
-	int getX() { return x; }
-	int getY() { return y; }
+	int getX() const { return x; }
+	int getY() const { return y; }
 	void up() { y++; }
 	void down() { y--; }
 	void right() { x++; }
