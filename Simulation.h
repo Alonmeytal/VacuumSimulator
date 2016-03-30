@@ -9,9 +9,12 @@
 #define SIMULATION_H_
 #include "AbstractAlgorithm.h"
 #include "AbstractSensor.h"
+#include "Sensor.h"
 #include "Point.h"
 #include "Direction.h"
 #include "House.h"
+#include <string>
+using namespace std;
 
 class Simulation
 {
@@ -26,11 +29,12 @@ class Simulation
 	Point currentLocation; // robot's current location.
 	AbstractSensor * sensor;
 
-	Simulation(AbstractAlgoritm * algo, House home, map<string,int> * s) :
-		steps(0), batteryMode(s["batteryCapacity"]), dirtCollected(0), hasFinished(false), algorithm(algo), house(home), settings(s), currentLocation(home.dockingPoint), sensor(nullptr)
+	Simulation(AbstractAlgorithm * algo, House home, map<string,int> * s) :
+		algorithm(algo), house(home), settings(s), steps(0), dirtCollected(0), hasFinished(false), currentLocation(home.dockingPoint), sensor(nullptr)
 	{
 		// TO-DO : fill other class memebers.
-		// sensor(&house, &currentLocation);
+		batteryMode = s->find("BatteryCapacity")->second;
+		sensor = new Sensor(&house, &currentLocation);
 	}
 
 	int runStep(); // runs the algorithm for a single step, updating currentLocation, batteryMode, and house dirt-levels.

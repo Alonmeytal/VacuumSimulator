@@ -13,7 +13,7 @@
 
 using namespace std;
 
-SensorInformation Sensor::sense() {
+SensorInformation Sensor::sense() const{
 	SensorInformation inf;
 
 	// Assuming the currentLocation is always inside walls, and so moving -/+1 from currentLocation is still in matrix boundaries.

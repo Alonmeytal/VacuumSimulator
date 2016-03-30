@@ -17,12 +17,12 @@ int Simulation::runStep(){
 	currentSensorInfo = sensor->sense();
 	Direction wantedDir = algorithm->step();
 
-	if (currentSensorInfo->isWall[wantedDir]) {
+	if (currentSensorInfo.isWall[(int)wantedDir]) {
 		return -1;
 	}
 	//there is enough battery and next step is not a wall, so we are moving
-	if (currentSensorInfo->dirtLevel > 0){
-		house::vacuum(currentLocation->x, currentLocation->y);
+	if (currentSensorInfo.dirtLevel > 0){
+		house.vacuum(currentLocation.getX(), currentLocation.getY());
 	}
 	steps++;
 	batteryMode--;
@@ -44,7 +44,7 @@ int Simulation::runStep(){
 		case Direction::Stay: //we're doing nothing but just a reminder that is an option
 			break;
 	}
-	if (house->matrix[currentLocation->y][currentLocation->x] == 'D' && dirtCollected==house.dirt){
+	if (house.matrix[currentLocation.getY()][currentLocation.getX()] == 'D' && dirtCollected==house.dirt){
 		this->hasFinished = true;
 		return 1;
 	}
