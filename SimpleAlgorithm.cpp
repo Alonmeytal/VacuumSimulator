@@ -6,6 +6,8 @@
  */
 
 #include <map>
+#include <cstdlib>
+#include <ctime>
 
 #include "Direction.h"
 #include "AbstractAlgorithm.h"
@@ -15,8 +17,8 @@ class SimpleAlgorithm: public AbstractAlgorithm {
 	map<string,int> settings;
 	const AbstractSensor * s;
 	int steps;
-
-	SimpleAlgorithm() : s(nullptr), steps(0) {}
+public:
+	SimpleAlgorithm() : s(nullptr), steps(0) { std::srand(std::time(0)); }
 
 	void aboutToFinish(int stepsTillFinishing)
 	{
@@ -29,9 +31,9 @@ class SimpleAlgorithm: public AbstractAlgorithm {
 		{
 			return Direction::Stay;
 		}
+		int direction;
 		SensorInformation inf = s->sense();
-		int direction = rand()%5;
-		while (!inf.isWall[direction = rand()%5]);
+		while (!inf.isWall[direction = std::rand()%5]);
 		steps++;
 		return (Direction)direction;
 	}

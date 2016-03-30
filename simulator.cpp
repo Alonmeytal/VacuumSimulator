@@ -20,6 +20,7 @@ using namespace std;
 // Actual Class(es)
 #include "House.h"
 #include "SimpleAlgorithm.cpp"
+#include "Simulation.h"
 // Function Objects
 #include "Settings.h"
 #include "HouseReader.h"
@@ -35,15 +36,16 @@ int main(int argc, char ** argv)
 
 	string configPath = "./";
 	string housesPath = "./";
-
+	string strConfig = "-config";
+	string strHouse = "-house_path";
 	if (argc > 1)
 	{
 		// command-line arguments (one or both) were inserted.
 		for (i = 1; i < argc; i++)
 		{
-			if (argv[i] == "-config")
+			if (strConfig.compare(argv[i]) == 0)
 				configIndex = i + 1;
-			else if (argv[i] == "-house_path")
+			else if (strHouse.compare(argv[i]) == 0)
 				housepathIndex = i + 1;
 		}
 		// -config argument was inserted, updating config file path.
@@ -59,7 +61,7 @@ int main(int argc, char ** argv)
 	// declaring setting set;
 	map<string, int> settings;
 	// loading settings from file (to "set", sent by reference).
-	settingsFromFile(settings&, configPath + "config.ini");
+	settingsFromFile(settings, configPath + "config.ini");
 
 	// creating houses list
 	list<House> houses;
@@ -68,45 +70,48 @@ int main(int argc, char ** argv)
 	//HouseReader reader(*houses);
 	//reader(housesPath);
 	// Hard coded house
-	House coded = new House();
+	House coded;
 	coded.name = "Simple1";
 	coded.description = "2 Bedrooms + Kitchen Isle";
 	coded.rows = 8;
 	coded.cols = 10;
 	coded.matrix = {"WWWWWWWWWW","W22  DW59W","W  W 1119W","W WWW3WW W","W6   3W  W","W78W  W  W","W99W  W  W","WWWWWWWWWW"};
-	coded.dockingPoint = new Point(5,2);
+	coded.dockingPoint = Point(5,2);
 	if (coded.isValid())
 	{
 		houses.push_back(coded);
 	}
 
+	int numOfHouses = houses.size();
 	// ! implement a simple algorithm for a cleaning robot.
 	// taken from recitation.
 
 	// Import other algorithms.
-	list<AbstractAlgorithm> algorithms;
+	list<AbstractAlgorithm*> algorithms;
 
 	// load all algorithms to list;
 	SimpleAlgorithm simpson;
-	algorithms.push_back(simpson);
+	algorithms.push_back(&simpson);
+
+	int numOfAlgorithms = algorithms.size();
 
 	// ! run a simulation of the algorithm on the house
 	list<Simulation> simulationsList;
 
 	// setting up simulation steps counting table : (house, algorithm) for scoring purposes.
-	int ** simulationSteps = new int*[houses.size()];
+	int ** simulationSteps = new int*[numOfHouses];
 	// also, setting up simulation scoring table.
-	int ** simulationScores = new int*[houses.size()];
+	int ** simulationScores = new int*[numOfHouses];
 
-	for (i = 0; i < houses.size(); i++)
+	for (i = 0; i < numOfHouses; i++)
 	{
-		simulationSteps[i] = new int[algorithms.size()];
-		simulationScores[i] = new int[algorithms.size()];
+		simulationSteps[i] = new int[numOfAlgorithms];
+		simulationScores[i] = new int[numOfAlgorithms];
 	}
 	// initializing counting table values.
-	for (i = 0; i < houses.size(); i++)
+	for (i = 0; i < numOfHouses; i++)
 	{
-		for (j = 0; j < algorithms.size(); j++)
+		for (j = 0; j < numOfAlgorithms; j++)
 		{
 			simulationSteps[i][j] = 0;
 		}
@@ -116,16 +121,16 @@ int main(int argc, char ** argv)
 	int stepsTaken, winnerSteps, stepsFromWinner, failedRobots, actualPlaceInCompetition, winnersThisRound;
 	bool winnerFound, finishedThisRound;
 	i = 0;
-	for (House currentHouse = houses.begin(); currentHouse != houses.end(); currentHouse++)
+	for (list<House>::iterator currentHouse = houses.begin(); currentHouse != houses.end(); ++currentHouse)
 	{
 		// for each algorithm;
-		for (AbstractAlgorithm * currentAlgorithm = algorithms.begin(); currentAlgorithm != algorithms.end(); currentAlgorithm++)
+		for (list<AbstractAlgorithm*>::iterator currentAlgorithm = algorithms.begin(); currentAlgorithm != algorithms.end(); ++currentAlgorithm)
 		{
 			// create a simulation instance that will run currentAlgorithm on currentHouse;
-			simulationsList.push_back(Simulation(currentAlgorithm, currentHouse, &settings));
+			simulationsList.push_back(Simulation(*currentAlgorithm, *currentHouse, &settings));
 		}
 
-		int * positionInCompetition = new int[algorithms.size()];
+		int * positionInCompetition = new int[numOfAlgorithms];
 
 		// should now run all algorithms on house, in a "round-robin" fashion.
 		stepsTaken = 0; // how many steps has the simulation done so far.
@@ -135,19 +140,19 @@ int main(int argc, char ** argv)
 		winnerFound = false; // flag for if finding a winner.
 		actualPlaceInCompetition = 1; // counter for place in competition.
 		// iterate while stepsTaken <= MaxSteps (setting) OR MaxStepsAfterWinner reached  AND not all robots made a mistake.
-		while (((stepsFromWinner <= settings["MaxStepsAfterWinner"]) || (stepsTaken <= settings["MaxSteps"])) && (failedRobots < algorithms.size()))
+		while (((stepsFromWinner <= settings["MaxStepsAfterWinner"]) || (stepsTaken <= settings["MaxSteps"])) && (failedRobots < numOfAlgorithms))
 		{
 			finishedThisRound = false;
 			winnersThisRound = 0;
 			int stepResult;
 			j = 0; // algorithm number.
 			// making each algorithm make a single step.
-			for (Simulation sim = simulationsList.begin(); sim != simulationsList.end(); sim++)
+			for (list<Simulation>::iterator sim = simulationsList.begin(); sim != simulationsList.end(); ++sim)
 			{
 				// make sure currentAlgrotim didn't make a mistake and thus should make another step.
 				if (simulationSteps[i][j] != -1)
 				{
-					stepResult = sim.runStep();
+					stepResult = (*sim).runStep();
 					switch (stepResult)
 					{
 					case -1 :
@@ -194,7 +199,7 @@ int main(int argc, char ** argv)
 
 		// finished iterating over currentHouse.
 		// looking for unfinished algorithms, setting their steps to simulationSteps.
-		for (j = 0; j < algorithms.size(); j++)
+		for (j = 0; j < numOfAlgorithms; j++)
 		{
 			if (simulationSteps[i][j] <= 0)
 			{
@@ -211,10 +216,10 @@ int main(int argc, char ** argv)
 
 		// scoring the robots for currentHouse.
 		j = 0;
-		for (Simulation sim = simulationsList.begin();sim != simulationsList.end(); sim++)
+		for (list<Simulation>::iterator sim = simulationsList.begin();sim != simulationsList.end(); ++sim)
 		{
 			simulationScores[i][j] = score(positionInCompetition[j] == 10 ? 10 : std::min(4,positionInCompetition[j]), winnerSteps,
-					simulationSteps[i][j], currentHouse.dirt, sim.dirtCollected,  sim.hasFinished);
+					simulationSteps[i][j], (*currentHouse).dirt, (*sim).dirtCollected,  (*sim).hasFinished);
 			j++;
 		}
 
@@ -225,11 +230,11 @@ int main(int argc, char ** argv)
 	}
 
 	// print scoring function.
-	for (i = 0; i < algorithms.size(); i++)
+	for (i = 0; i < numOfAlgorithms; i++)
 	{
 		// for each algorithm.
 		j = 0;
-		for (House h = houses.begin(); h != houses.end(); h++)
+		for (list<House>::iterator h = houses.begin(); h != houses.end(); ++h)
 		{
 			// for each house.
 			// print "[<House Short Name>]\t<Score>\n".
@@ -240,7 +245,7 @@ int main(int argc, char ** argv)
 	}
 
 	// freeing simlationSteps table.
-	for (i = 0; i < houses.size(); i ++)
+	for (i = 0; i < numOfHouses; i++)
 	{
 		delete [] simulationSteps[i];
 		delete [] simulationScores[i];
