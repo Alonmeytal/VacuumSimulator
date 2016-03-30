@@ -13,7 +13,7 @@
 
 class SimpleAlgorithm: public AbstractAlgorithm {
 	map<string,int> settings;
-	AbstractSensor s;
+	AbstractSensor * s;
 	int steps;
 
 	SimpleAlgorithm() : settings(NULL), s(NULL), steps(0) {}
@@ -29,7 +29,7 @@ class SimpleAlgorithm: public AbstractAlgorithm {
 		{
 			return Direction::Stay;
 		}
-		SensorInformation inf = s.sense();
+		SensorInformation inf = s->sense();
 		int direction = rand()%5;
 		while (!inf.isWall[direction = rand()%5]);
 		steps++;
