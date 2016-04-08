@@ -143,7 +143,7 @@ int main(int argc, char ** argv)
 		for (list<AbstractAlgorithm*>::iterator currentAlgorithm = algorithms.begin(); currentAlgorithm != algorithms.end(); ++currentAlgorithm)
 		{
 			// create a simulation instance that will run currentAlgorithm on currentHouse;
-			simulationsList.push_back(Simulation(*currentAlgorithm, *currentHouse, &settings));
+			simulationsList.emplace_back(*currentAlgorithm, *currentHouse, &settings);
 		}
 
 		int * positionInCompetition = new int[numOfAlgorithms];
@@ -156,7 +156,7 @@ int main(int argc, char ** argv)
 		winnerFound = false; // flag for if finding a winner.
 		actualPlaceInCompetition = 1; // counter for place in competition.
 		// iterate while stepsTaken <= MaxSteps (setting) OR MaxStepsAfterWinner reached  AND not all robots made a mistake.
-		while (((stepsFromWinner <= settings["MaxStepsAfterWinner"]) || (stepsTaken <= settings["MaxSteps"])) && (failedRobots < numOfAlgorithms))
+		while (((stepsFromWinner <= settings["MaxStepsAfterWinner"]) && (stepsTaken <= settings["MaxSteps"])) && (failedRobots < numOfAlgorithms))
 		{
 			finishedThisRound = false;
 			winnersThisRound = 0;
