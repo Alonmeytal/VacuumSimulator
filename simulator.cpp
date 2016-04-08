@@ -137,13 +137,13 @@ int main(int argc, char ** argv)
 	int stepsTaken, winnerSteps, stepsFromWinner, failedRobots, actualPlaceInCompetition, winnersThisRound;
 	bool winnerFound, finishedThisRound;
 	i = 0;
-	for (list<House>::iterator currentHouse = houses.begin(); currentHouse != houses.end(); ++currentHouse)
+	for (House& currentHouse : houses)
 	{
 		// for each algorithm;
-		for (list<AbstractAlgorithm*>::iterator currentAlgorithm = algorithms.begin(); currentAlgorithm != algorithms.end(); ++currentAlgorithm)
+		for (AbstractAlgorithm * currentAlgorithm : algorithms)
 		{
 			// create a simulation instance that will run currentAlgorithm on currentHouse;
-			simulationsList.emplace_back(*currentAlgorithm, *currentHouse, &settings);
+			simulationsList.emplace_back(currentAlgorithm, currentHouse, &settings);
 		}
 
 		int * positionInCompetition = new int[numOfAlgorithms];
@@ -163,12 +163,12 @@ int main(int argc, char ** argv)
 			int stepResult;
 			j = 0; // algorithm number.
 			// making each algorithm make a single step.
-			for (list<Simulation>::iterator sim = simulationsList.begin(); sim != simulationsList.end(); ++sim)
+			for (Simulation& sim : simulationsList)
 			{
 				// make sure currentAlgrotim didn't make a mistake and thus should make another step.
 				if (simulationSteps[i][j] != -1)
 				{
-					stepResult = (*sim).runStep();
+					stepResult = sim.runStep();
 					switch (stepResult)
 					{
 					case -1 :
@@ -232,10 +232,10 @@ int main(int argc, char ** argv)
 
 		// scoring the robots for currentHouse.
 		j = 0;
-		for (list<Simulation>::iterator sim = simulationsList.begin();sim != simulationsList.end(); ++sim)
+		for (Simulation& sim : simulationsList)
 		{
 			simulationScores[i][j] = score(positionInCompetition[j] == 10 ? 10 : std::min(4,positionInCompetition[j]), winnerSteps,
-					simulationSteps[i][j], (*currentHouse).dirt, (*sim).dirtCollected,  (*sim).hasFinished);
+					simulationSteps[i][j], currentHouse.dirt, sim.dirtCollected,  sim.hasFinished);
 			j++;
 		}
 
@@ -250,7 +250,7 @@ int main(int argc, char ** argv)
 	{
 		// for each algorithm.
 		j = 0;
-		for (list<House>::iterator h = houses.begin(); h != houses.end(); ++h)
+		for (House h : houses)
 		{
 			// for each house.
 			// print "[<House Short Name>]\t<Score>\n".
