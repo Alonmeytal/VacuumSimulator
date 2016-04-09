@@ -7,6 +7,7 @@
  */
 
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <list>
 #include <array>
@@ -34,43 +35,52 @@ int main(int argc, char ** argv)
 	// ! get the following command-line arguments : -config -housepath
 	// setting up markers for where the arguments are in the command-line string
 	// Initialized to -1, if it won't change, then argument was not found.
-	int configIndex = -1, housepathIndex = -1;
+	/*
+	Reader r(argc, argv);
+	{
+		// save to local map, all paths.
+	}
+	map<string,int> settings;
+	list<House> houses;
+	list<AbstractAlgorithm*> algorithms;
+	r.readFromPaths(settings, houses, algorithms);
+	Reader::readFromPaths(map<string,int>& settings, list<House>& houses, list<AbstractAlgorithm*>& algorithms)
+	{
+		// if reading failed completely return -1 : print usage & exit.
+		// if reading failed partly return -2 : print errorsList (internal list<string> containing errors) & exit.
+		// otherwise continue.
+		int readSettings(map<string,int> settings); // read settings.
+		readAlgorithms(list<AbstractAlgorithm*> algorithms);
+		readHouses(list<House> houses);
+	}
+	*/
+	map<string,string> paths;
 
-	string configPath = "./";
-	string housesPath = "./";
-	string strConfig = "-config";
-	string strHouse = "-house_path";
+	const string strConfig = "-config";
+	const string strHouse = "-house_path";
+	const string strAlgorithms = "-algorithm_path";
+
+	paths[strConfig] = "./"; // -config argument default value.
+	paths[strHouse] = "./"; // -house_path argument default value.
+	paths[strAlgorithms] = "./"; // - algorithm_path default value
+
 	if (argc > 1)
 	{
-		// command-line arguments (one or both) were inserted.
-		for (i = 1; i < argc; i++)
+		// command-line arguments (one or more) were inserted, updating relevant values.
+		for (i = 1; i < argc; i += 2)
 		{
-			if (strConfig.compare(argv[i]) == 0)
-				configIndex = i + 1;
-			else if (strHouse.compare(argv[i]) == 0)
-				housepathIndex = i + 1;
+			paths[argv[i]] = argv[i+1];
 		}
-		// -config argument was inserted, updating config file path.
-		if (configIndex != -1)
-			configPath = argv[configIndex];
-		// -hosue_path argument was inserted, updating path to house files.
-		if (housepathIndex != -1)
-			housesPath = argv[housepathIndex];
 	}
 
-	// ! load setting from ($configPath)/config.ini
-
-	// declaring setting set;
-	map<string, int> settings;
-	// loading settings from file (to "set", sent by reference).
-	settingsFromFile(settings, configPath + "config.ini");
-
-	// creating houses list
-	list<House> houses;
+	// ! load setting from ($configPath)/config.in
+	map<string, int> settings; 	// declaring settings map
+	settingsFromFile(settings, paths[strConfig] + "config.ini"); 	// loading settings from file (to "set", sent by reference).
 
 	// ! read all houses house files from ($housesPath)/*.house
-	//HouseReader reader(*houses);
-	//reader(housesPath);
+	list<House> houses; // creating houses list
+	//housesFromPath(houses, paths[strHouse]);
+
 	// Hard coded house
 	House coded;
 	coded.name = "Simple1";
@@ -246,18 +256,36 @@ int main(int argc, char ** argv)
 	}
 
 	// print scoring function.
+
+	//					algorithm, score per house,	trimmed_N, avg + spacers.
+	const int rowLengthInChars = 13 + (numOfAlgorithms + 2) * 10 + (1 + numOfAlgorithms + 2) + 1;
+	cout << setfill('-') << setw(rowLengthInChars) << '-' << setfill(' ') << endl; // dash-spacing line.
+	cout << "|" << setw(13) << " " << "|"; // algorithms name empty column title.
+	for (House& h : houses)
+	{
+		cout << setw(10) << left << h.name << "|";
+	}
+	cout << setw(10) << left << "trimmed_n" << "|" << setw(10) << left << "AVG" << "|" << endl;
+
+	int avgForAlgorithm;
 	for (i = 0; i < numOfAlgorithms; i++)
 	{
+		cout << setfill('-') << setw(rowLengthInChars) << '-' << setfill(' ') << endl; // dash-spacing line.
+		avgForAlgorithm = 0;
 		// for each algorithm.
 		j = 0;
+		cout << "|" << setw(13) << left << "algo_name" + i << "|";
 		for (House h : houses)
 		{
 			// for each house.
-			// print "[<House Short Name>]\t<Score>\n".
-			//cout << "[" << h.name << "]\t" << simulationScores[j][i] << endl;
-			cout << simulationScores[j][i] << endl; // required for Targil 1 only.
+
+			cout << setw(10) << right << simulationScores[j][i]; // required for Targil 1 only.
+			avgForAlgorithm += simulationScores[j][i];
 			j++;
 		}
+		cout << "|" << setw(10) << right << "some n"; // trimmed-n
+		cout << "|" << setw(10) << setprecision(3) << right << avgForAlgorithm/numOfHouses << "|" << endl;
+		cout << setfill('-') << setw(rowLengthInChars) << '-' << setfill(' ') << endl; // dash-spacing line.
 	}
 
 	// freeing simlationSteps table.
