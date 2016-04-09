@@ -13,6 +13,7 @@
 #include <array>
 #include <algorithm>
 #include <cstring>
+
 using namespace std;
 
 // Interface(s) provided.
@@ -263,6 +264,10 @@ int main(int argc, char ** argv)
 	cout << "|" << setw(13) << " " << "|"; // algorithms name empty column title.
 	for (House& h : houses)
 	{
+		if (h.name.size() > 9)
+		{
+			h.name.resize(9); // if size is bigger then 9, shrinking it.
+		}
 		cout << setw(10) << left << h.name << "|";
 	}
 	cout << setw(10) << left << "trimmed_n" << "|" << setw(10) << left << "AVG" << "|" << endl;
