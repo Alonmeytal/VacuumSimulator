@@ -7,9 +7,14 @@
  */
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <list>
 #include <map>
 #include <string>
+#include <vector>
+
+#include <unistd.h>
 
 using namespace std;
 
@@ -29,6 +34,9 @@ class Reader {
 
 	void printErrors();
 	list<string> getFilesFromPath(string path, string fileExtension);
+
+	string trim(string& str);
+	vector<string> split(const string &s, char delim);
 
 public:
 	Reader(int argc, char ** argv);
