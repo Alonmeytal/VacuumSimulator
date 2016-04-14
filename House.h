@@ -18,12 +18,13 @@ class House {
 public:
 	int rows, cols; // house size (rows and columns).
 	int dirt; // sum of dirt in the house (to begin with).
-	string name, description;
+	string name;
+	int maxSteps;
 	char ** matrix; // house matrix[rows][cols].
 	Point dockingPoint; // Point representing the co-ordinates of 'D' in the house.
 
 	// empty constructor.
-	House() :rows(0), cols(0), dirt(0), name("NONAME"), description("NONE"), matrix(nullptr), dockingPoint(Point(0,0)) {};
+	House() :rows(0), cols(0), dirt(0), name("NONAME"), maxSteps(0), matrix(nullptr), dockingPoint(Point(0,0)) {};
 	// copy constructor.
 	House(const House& otherHouse);
 	// from *.house file constructor.

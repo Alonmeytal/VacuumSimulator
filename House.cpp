@@ -15,37 +15,91 @@
 using namespace std;
 
 House::House(string fileName) : House() {
-	ifstream fin(fileName); // opening file-stream to ($fileName) containing the house
-	getline(fin, name); // Reading house name
-	getline(fin, description); // Reading house description
-	fin >> rows; // Reading house rows
-	fin >> cols; // Reading house col(um)s
-	fin.ignore(); // Skipping newline and going to the beginning of the matrix
-	matrix = new char*[rows];
+	ifstream houseFileStream(fileName); // opening file-stream to ($fileName) containing the house
+	getline(houseFileStream, name); // Reading house name
+	houseFileStream >> maxSteps; // Reading house max Steps
+	houseFileStream >> rows; // Reading house rows
+	houseFileStream >> cols; // Reading house columns
+
+	// reading House.matrix from file.
+	matrix = new char*[rows]; // assigning rows of char[], according to House.rows
 	string row;
+
+	int i, j;
 	for (int i = 0; i < rows; i++)
 	{
-		matrix[i] = new char[cols];
-		getline(fin, row); //h.matrix[i]);
-		for (int j = 0; j < cols; j++)
+		getline(houseFileStream, row); // reading current line from houseFileStream into $row
+		matrix[i] = new char[cols]; // assigning row to memory, according to House.cols
+		if (fin.eof())
 		{
-		matrix[i][j] = row[j];
-			if (row[j] == 'D')
+			// house file was too short (didn't have enough rows).
+			for (j = 0; j < cols; j++)
 			{
-				dockingPoint = Point(i,j);
+				matrix[i][j] = 'W'; // filling remaining rows with walls.
 			}
-			else if ((row[j] >= '1') && (row[j] <= '9'))
+		}
+		else
+		{
+			// still within file house rows.
+			for (j = 0; (j < cols) || (j < row.length()); j++)
 			{
-				dirt += (row[j] - '0');
+				matrix[i][j] = row[j]; // copying value into house matrix.
+				if ((row[j] >= '1') && (row[j] <= '9'))
+				{
+					dirt += (row[j] - '0'); // cell contained dirt, accumulating it into House.dirt.
+				}
+				else if (row[j] == '0')
+				{
+					matrix[i][j] = ' '; // in case it accidently says '0', writing ' '(blank) instead.
+				}
+
+			}
+			if (row.length() < cols)
+			{
+				// row was shorter then needed, completing with walls.
+				for (j = row.length; j < cols; j++)
+				{
+					matrix[i][j] = 'W';
+				}
+			}
+
+		}
+	}
+
+	// rewriting boundaries into walls (in case they weren't)
+	for (i = 0; i < cols; i++)
+	{
+		matrix[0][i] = 'W';
+		matrix[rows-1][i] = 'W';
+	}
+	for (i = 0; i < rows; i++)
+	{
+		matrix[i][0] = 'W';
+		matrix[i][cols-1] = 'W';
+	}
+
+	// counting docking points.
+	int dockingCounter = 0;
+	for (i = 0; i < rows; i++)
+	{
+		for (j = 0; j < cols; j++)
+		{
+			if (matrix[i][j] == 'D')
+			{
+				dockingPoint = new Point(i,j);
+				dockingCounter++;
 			}
 		}
 	}
+	// should throw an exception : if (dockingCounter > 1) { }
 }
 House::House(const House & otherHouse) : House() {
+	name = otherHouse.name;
+	maxSteps = otherHouse.maxSteps;
 	cols = otherHouse.cols;
 	rows = otherHouse.rows;
-	name = otherHouse.name;
-	description = otherHouse.description;
+
+	// assigning and copying matrix. char-by-char \O.O/
 	matrix = new char*[rows];
 	for (int i = 0; i < rows; i++)
 	{
@@ -60,7 +114,6 @@ House::House(const House & otherHouse) : House() {
 
 void House::print() {
 	cout << "House name: " << name << endl; // Printing house's name
-	cout << "House description: " << description << endl; // Printing house's description
 	// Printing house matrix
 	for (int i = 0; i < rows; ++i)
 	{
