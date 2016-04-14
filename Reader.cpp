@@ -19,7 +19,7 @@ Reader::Reader(int argc, char ** argv) {
 	paths[strHouse] = "./"; // -house_path argument default value.
 	paths[strAlgorithms] = "./"; // - algorithm_path default value
 
-	if (argc > 1)
+	if ((argc > 1) && (argc % 2))
 	{
 		// command-line arguments (one or more) were inserted, updating relevant values.
 		for (int i = 1; i < argc; i += 2)
