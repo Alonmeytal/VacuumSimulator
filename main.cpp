@@ -36,18 +36,12 @@ int main(int argc, char ** argv)
 	Reader reader(argc, argv);
 	list<string> errorsList;
 	// get settings.
-	map<string, string> settings = reader.getSettings();
+	map<string, int> settings = reader.getSettings(errorsList);
 
 	// get algorithms.
 	//	get algorithms file list.
-	list<string> algorithmFilesList = reader.getFiles(reader.algorithm_path, ".so");
-	if ((algorthmFilesList.size() == 0) && (strAlgorithms.compare("./") != 0))
-	{
-		// no .so files were found in -algorithm_path and it wasn't the working directory.
-		// trying to find .so files in working directory.
-		algorithmFilesList = reader.getFiles("./", ".so");
-		if ()
-	}
+	list<string> algorithmFilesList = reader.getAlgorithmFiles(errorsList);
+
 	//  load algorithms from files.
 	int sizeBefore, sizeAfter;
 	list<void *> dlList;
@@ -89,7 +83,7 @@ int main(int argc, char ** argv)
 
 	// get houses.
 	//	get .house file list.
-	list<string> houseFilesList = reader.getFiles(reader.house_path, ".house");
+	list<string> houseFilesList = reader.getHouseFiles(errorsList);
 	//	create houses from files.
 	list<House> houses;
 	for (string HouseFile : housesFilesList)
