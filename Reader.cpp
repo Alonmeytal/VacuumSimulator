@@ -83,14 +83,20 @@ list<string,int> Reader::getSettings(list<string>& errorsList) {
 }
 
 list<string> Reader::getHouseFiles(list<string>& errorsList) {
-	return getFilesFromPath(paths[strHouse], ".house", errorsList);
+	list<string> housesFromPath = getFilesFromPath(paths[strHouse], ".house", errorsList);
+	if ((path[strAlgorithms] != "./") && (alogirthmsFromPath.size() == 0))
+	{
+		// in-case path is empty (no houses), it is instructed to look for houses in the working directory.
+		housesFromPath = getFilesFromPath("./", ".house", errorsList);
+	}
+	return housesFromPath;
 }
 
 list<string> Reader::readAlgorithms(list<string>& errorsList) {
 	list<string> algorithmsFromPath = getFilesFromPath(paths[strAlgorithms], ".so", errorsList);
-	if (paths[strAlgorithms] != "./" && algorithmsFromPath.size() == 0)
+	if ((paths[strAlgorithms] != "./") && (algorithmsFromPath.size() == 0))
 	{
-		// in-case path is empty, it is instructed to look for algorithms in the working directory.
+		// in-case path is empty (no algorithms), it is instructed to look for algorithms in the working directory.
 		algorithmsFromPath = getFilesFrompath("./", ".so", errorsList);
 	}
 	return algorithmsFromPath;
