@@ -17,22 +17,24 @@
 using namespace std;
 
 // Interface(s) provided.
-#include "Direction.h"
-#include "SensorInformation.h"
-#include "AbstractSensor.h"
 #include "AbstractAlgorithm.h"
 #include "AlgorithmFactory.h"
 // Actual Class(es)
 #include "House.h"
-#include "Simulation.h"
 // Function Objects
 #include "Reader.h"
 #include "Simulator.h"
 
-extern map<string, algorithm_constructor> AlgorithmFactory;
+extern map<string, algorithm_constructor *> AlgorithmFactory;
 
-int main(int argc, char ** argv)
-{
+void printErrors(list<string>& errorsList) {
+	for (string e : errorsList)
+	{
+		cout << e << endl;
+	}
+}
+
+int main(int argc, char ** argv) {
 	Reader reader(argc, argv);
 	list<string> errorsList;
 	int errorsBefore, errorsAfter;
@@ -57,11 +59,11 @@ int main(int argc, char ** argv)
 	for (string algorithmFile : algorithmFilesList)
 	{
 		sizeBefore = AlgorithmFactory.size();
-		void * dlHandler = dlopen(algorithmFile, RTLD_NOW); // trying to load .so file.
-		if (dlHandler == null)
+		void * dlHandler = dlopen(algorithmFile.c_str(), RTLD_NOW); // trying to load .so file.
+		if (dlHandler == NULL)
 		{
 			// dlHandler is empty because the file failed to load.
-			errorsList.push_back(algorithmFile + ": file cannot be loaded or is not a valid .so")
+			errorsList.push_back(algorithmFile + ": file cannot be loaded or is not a valid .so");
 		}
 		else
 		{
@@ -78,16 +80,16 @@ int main(int argc, char ** argv)
 	if (errorsList.size() > 0)
 	{
 		// "(If there is a problem with algorithm files, we do not continue to check houses.)"
-		errorsList.push_front("All algorithm files in target folder '" + reader.getAlgorithmPath() + "'cannot be opened or are invalid:")
+		errorsList.push_front("All algorithm files in target folder '" + reader.getAlgorithmPath() + "'cannot be opened or are invalid:");
 		printErrors(errorsList);
 		return -1;
 	}
 
 
 	list<AbstractAlgorithm*> algorithms;
-	for (pair<string, algorithm_constructor> algorithm : AlgorithmFactory)
+	for (auto algorithm : AlgorithmFactory)
 	{
-		algorithms.push_back(algorithm_constructor()); // maybe parenthesis are obsolete.
+		algorithms.push_back(algorithm.second()); //algorithm_constructor); // maybe parenthesis are obsolete.
 	}
 
 	// get houses.
@@ -96,7 +98,7 @@ int main(int argc, char ** argv)
 	//	create houses from files.
 	list<House> houses;
 	errorsBefore = errorsList.size();
-	for (string HouseFile : housesFilesList)
+	for (string HouseFile : houseFilesList)
 	{
 		try
 		{
@@ -112,11 +114,12 @@ int main(int argc, char ** argv)
 	if(errorsAfter - errorsBefore > 0)
 	{
 		// errors eccured during houses loading.
-		errrosList.push_front("All house files in target folder '" + reader.getHousePath() + "' cannot be opened or are invalid:")
+		errorsList.push_front("All house files in target folder '" + reader.getHousePath() + "' cannot be opened or are invalid:");
+		printErrors(errorsList);
 	}
 
 	// run simulator on houses and algorithms
-	Simulator(houses, algorithms).run();
+	Simulator(settings, houses, algorithms).run();
 
 	for (void * dlHandler : dlList)
 	{

@@ -8,7 +8,6 @@
 
 using namespace std;
 
-#include <dir.h>
 #include <dirent.h>
 
 #include "Reader.h"
@@ -31,23 +30,25 @@ Reader::Reader(int argc, char ** argv) {
 
 map<string,int> Reader::getSettings(list<string>& errorsList) {
 	int i = 0;
+	map<string,int> settings;
 	const char * pathToConfig = paths[strConfig].c_str();
+	
 	if (access(pathToConfig, F_OK) != 0)
 	{
 		// file doesn't exist. usage should be printed and exit.
 		errorsList.push_back(usageString);
 		return settings;
 	}
-    ifstream ConfigStream(pathToConfig, in);
+    ifstream configStream(pathToConfig);
     if (configStream.is_open() == false)
     {
-    	// file couldn't be open for reading.
-    	errorsList.push_back("config.ini exist in '" + pathToConfig + "' but cannot be opened");
+    	// file couldn't be opened for reading.
+    	errorsList.push_back("config.ini exists in '" + string(pathToConfig) + "' but cannot be opened");
     	return settings;
     }
 
     string line;
-    while (getline(fin, line))
+    while (getline(configStream, line))
     {
     	vector<string> tokens = split(line, '=');
     	if (tokens.size() != 2)
@@ -60,7 +61,9 @@ map<string,int> Reader::getSettings(list<string>& errorsList) {
 
     if (i < 4)
     {
-    	line = "config.ini missing " + (4 - i) + " parameter(s):";
+    	int missingArguments = 4- i;
+
+    	line = "config.ini missing " + to_string(missingArguments) + " parameter(s):";
     	if (settings.count("MaxStepsAfterWinner") == 0)
     	{
     		line += (i++ < 4) ? " MaxStepsAfterWinner," : " MaxStepsAfterWinner";
@@ -84,7 +87,7 @@ map<string,int> Reader::getSettings(list<string>& errorsList) {
 
 list<string> Reader::getHouseFiles(list<string>& errorsList) {
 	list<string> housesFromPath = getFilesFromPath(paths[strHouse], ".house", errorsList);
-	if ((path[strAlgorithms] != "./") && (alogirthmsFromPath.size() == 0))
+	if ((paths[strAlgorithms] != "./") && (housesFromPath.size() == 0))
 	{
 		// in-case path is empty (no houses), it is instructed to look for houses in the working directory.
 		housesFromPath = getFilesFromPath("./", ".house", errorsList);
@@ -92,12 +95,12 @@ list<string> Reader::getHouseFiles(list<string>& errorsList) {
 	return housesFromPath;
 }
 
-list<string> Reader::getAlgorithmsFiles(list<string>& errorsList) {
+list<string> Reader::getAlgorithmFiles(list<string>& errorsList) {
 	list<string> algorithmsFromPath = getFilesFromPath(paths[strAlgorithms], ".so", errorsList);
 	if ((paths[strAlgorithms] != "./") && (algorithmsFromPath.size() == 0))
 	{
 		// in-case path is empty (no algorithms), it is instructed to look for algorithms in the working directory.
-		algorithmsFromPath = getFilesFrompath("./", ".so", errorsList);
+		algorithmsFromPath = getFilesFromPath("./", ".so", errorsList);
 	}
 	return algorithmsFromPath;
 }
@@ -112,7 +115,7 @@ list<string> Reader::getFilesFromPath(string path, string fileExtension, list<st
 	if ((pathDirectory = opendir(path.c_str())) == NULL)
 	{
 		// Directory couldn't be opened, returning usage.
-		errorsList.push_back(UsageString);
+		errorsList.push_back(usageString);
 		return filePaths;
 	}
 
@@ -121,7 +124,7 @@ list<string> Reader::getFilesFromPath(string path, string fileExtension, list<st
 	{
 		if (((string)fileEntity->d_name).find(fileExtension) != string::npos)
 		{
-			filePaths.push_back(housesPath + "/" + fileEntity->d_name));
+			filePaths.push_back(path + "/" + fileEntity->d_name);
 		}
 	}
 

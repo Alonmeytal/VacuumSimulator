@@ -10,4 +10,4 @@
 
 typedef AbstractAlgorithm *algorithm_constructor();
 
-map<string, algorithm_constructor> AlgorithmFactory;
+map<string, algorithm_constructor *> AlgorithmFactory;

@@ -32,7 +32,7 @@ class Reader {
 	Reader(const Reader& r) = delete; // copy c'tor
 	Reader(const Reader&& r) = delete; // move c'tor
 
-	list<string> getFilesFromPath(string path, string fileExtension);
+	list<string> getFilesFromPath(string path, string fileExtension, list<string>& errorsList);
 
 	string trim(string& str);
 	vector<string> split(const string &s, char delim);
@@ -44,7 +44,7 @@ public:
 	list<string> getHouseFiles(list<string>& errorsList);
 	list<string> getAlgorithmFiles(list<string>& errorsList);
 
-	string getConfigPath() const { return paths[strConfig]; }
-	string getHousePath() const { return paths[strHouse]; }
-	string getAlgorithmPath() const { return paths[strAlgorithms]; }
+	string getConfigPath() { return paths[strConfig]; }
+	string getHousePath() { return paths[strHouse]; }
+	string getAlgorithmPath() { return paths[strAlgorithms]; }
 };

@@ -30,11 +30,11 @@ House::House(string fileName) : House() {
 	string row;
 
 	int i, j;
-	for (int i = 0; i < rows; i++)
+	for (i = 0; i < rows; i++)
 	{
 		getline(houseFileStream, row); // reading current line from houseFileStream into $row
 		matrix[i] = new char[cols]; // assigning row to memory, according to House.cols
-		if (fin.eof())
+		if (houseFileStream.eof())
 		{
 			// house file was too short (didn't have enough rows).
 			for (j = 0; j < cols; j++)
@@ -45,7 +45,7 @@ House::House(string fileName) : House() {
 		else
 		{
 			// still within file house rows.
-			for (j = 0; (j < cols) || (j < row.length()); j++)
+			for (j = 0; (j < cols) || (j < ((int) row.length())); j++)
 			{
 				matrix[i][j] = row[j]; // copying value into house matrix.
 				if ((row[j] >= '1') && (row[j] <= '9'))
@@ -58,10 +58,10 @@ House::House(string fileName) : House() {
 				}
 
 			}
-			if (row.length() < cols)
+			if (((int) row.length()) < cols)
 			{
 				// row was shorter then needed, completing with walls.
-				for (j = row.length; j < cols; j++)
+				for (j = row.length(); j < cols; j++)
 				{
 					matrix[i][j] = 'W';
 				}
@@ -90,13 +90,16 @@ House::House(string fileName) : House() {
 		{
 			if (matrix[i][j] == 'D')
 			{
-				dockingPoint = new Point(i,j);
+				dockingPoint = Point(i,j);
 				dockingCounter++;
 			}
 			else if (((matrix[i][j] < '1') && (matrix[i][j] > '9')) && ((matrix[i][j] != 'W') && (matrix[i][j] != ' ')))
 			{
 				// character is not a valid character and thus should throw an exception
-				throw "line number " + i + " in house file shall be a positive number, found: " + matrix[i][j];
+				char * problem;
+				sprintf(problem, "line number %d in house file shall be a positive number, found: %c", i, matrix[i][j]);
+				// = "line number " + i + " in house file shall be a positive number, found: " + matrix[i][j];
+				throw problem;
 			}
 		}
 	}
