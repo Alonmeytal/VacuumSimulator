@@ -29,7 +29,7 @@ Reader::Reader(int argc, char ** argv) {
 	}
 }
 
-list<string,int> Reader::getSettings(list<string>& errorsList) {
+map<string,int> Reader::getSettings(list<string>& errorsList) {
 	int i = 0;
 	const char * pathToConfig = paths[strConfig].c_str();
 	if (access(pathToConfig, F_OK) != 0)
@@ -63,7 +63,7 @@ list<string,int> Reader::getSettings(list<string>& errorsList) {
     	line = "config.ini missing " + (4 - i) + " parameter(s):";
     	if (settings.count("MaxStepsAfterWinner") == 0)
     	{
-    		line += (i++ < 4) ? " MaxStepsAfterWinner," : " MaxStepsAfterWinner," ";
+    		line += (i++ < 4) ? " MaxStepsAfterWinner," : " MaxStepsAfterWinner";
     	}
     	if (settings.count("BatteryCapacity") == 0)
     	{
@@ -92,7 +92,7 @@ list<string> Reader::getHouseFiles(list<string>& errorsList) {
 	return housesFromPath;
 }
 
-list<string> Reader::readAlgorithms(list<string>& errorsList) {
+list<string> Reader::getAlgorithmsFiles(list<string>& errorsList) {
 	list<string> algorithmsFromPath = getFilesFromPath(paths[strAlgorithms], ".so", errorsList);
 	if ((paths[strAlgorithms] != "./") && (algorithmsFromPath.size() == 0))
 	{

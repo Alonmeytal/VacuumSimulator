@@ -32,7 +32,6 @@ class Reader {
 	Reader(const Reader& r) = delete; // copy c'tor
 	Reader(const Reader&& r) = delete; // move c'tor
 
-	void printErrors();
 	list<string> getFilesFromPath(string path, string fileExtension);
 
 	string trim(string& str);
@@ -41,7 +40,11 @@ class Reader {
 public:
 	Reader(int argc, char ** argv);
 
-	int getSettings(list<string>& errorsList);
-	int getHouseFiles(list<string>& errorsList);
-	int getAlgorithmFiles(list<string>& errorsList);
+	map<string, int> getSettings(list<string>& errorsList);
+	list<string> getHouseFiles(list<string>& errorsList);
+	list<string> getAlgorithmFiles(list<string>& errorsList);
+
+	string getConfigPath() const { return paths[strConfig]; }
+	string getHousePath() const { return paths[strHouse]; }
+	string getAlgorithmPath() const { return paths[strAlgorithms]; }
 };

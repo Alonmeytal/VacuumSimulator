@@ -35,8 +35,16 @@ int main(int argc, char ** argv)
 {
 	Reader reader(argc, argv);
 	list<string> errorsList;
+	int errorsBefore, errorsAfter;
 	// get settings.
+	errorsBefore = errorsList.size();
 	map<string, int> settings = reader.getSettings(errorsList);
+	errorsAfter = errorsList.size();
+	if (errorsAfter - errorsBefore > 0)
+	{
+		printErrors(errorsList);
+		return -1;
+	}
 
 	// get algorithms.
 	//	get algorithms file list.
@@ -67,10 +75,11 @@ int main(int argc, char ** argv)
 		}
 	}
 
-	if (errorList.size() == 0)
+	if (errorsList.size() > 0)
 	{
 		// "(If there is a problem with algorithm files, we do not continue to check houses.)"
-		errorList.push_front("All algorithm files in target folder '" + reader.algorithm_path + "'cannot be opened or are invalid:")
+		errorsList.push_front("All algorithm files in target folder '" + reader.getAlgorithmPath() + "'cannot be opened or are invalid:")
+		printErrors(errorsList);
 		return -1;
 	}
 
@@ -86,11 +95,25 @@ int main(int argc, char ** argv)
 	list<string> houseFilesList = reader.getHouseFiles(errorsList);
 	//	create houses from files.
 	list<House> houses;
+	errorsBefore = errorsList.size();
 	for (string HouseFile : housesFilesList)
 	{
-		houses.emplace_back(HouseFile);
+		try
+		{
+			houses.emplace_back(HouseFile);	
+		}
+		catch (const char * problem)
+		{
+			errorsList.push_back(HouseFile + ": " + problem);
+		}
 	}
+	errorsAfter = errorsList.size();
 
+	if(errorsAfter - errorsBefore > 0)
+	{
+		// errors eccured during houses loading.
+		errrosList.push_front("All house files in target folder '" + reader.getHousePath() + "' cannot be opened or are invalid:")
+	}
 
 	// run simulator on houses and algorithms
 	Simulator(houses, algorithms).run();

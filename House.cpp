@@ -16,6 +16,10 @@ using namespace std;
 
 House::House(string fileName) : House() {
 	ifstream houseFileStream(fileName); // opening file-stream to ($fileName) containing the house
+	if (!houseFileStream.is_open())
+	{
+		throw "cannot open file";
+	}
 	getline(houseFileStream, name); // Reading house name
 	houseFileStream >> maxSteps; // Reading house max Steps
 	houseFileStream >> rows; // Reading house rows
@@ -80,18 +84,30 @@ House::House(string fileName) : House() {
 
 	// counting docking points.
 	int dockingCounter = 0;
-	for (i = 0; i < rows; i++)
+	for (i = 1; i < rows; i++)
 	{
-		for (j = 0; j < cols; j++)
+		for (j = 1; j < cols; j++)
 		{
 			if (matrix[i][j] == 'D')
 			{
 				dockingPoint = new Point(i,j);
 				dockingCounter++;
 			}
+			else if (((matrix[i][j] < '1') && (matrix[i][j] > '9')) && ((matrix[i][j] != 'W') && (matrix[i][j] != ' ')))
+			{
+				// character is not a valid character and thus should throw an exception
+				throw "line number " + i + " in house file shall be a positive number, found: " + matrix[i][j];
+			}
 		}
 	}
-	// should throw an exception : if (dockingCounter > 1) { }
+	if (dockingCounter == 0)
+	{
+		throw "missing docking station (no D in house)";
+	}
+	if (dockingCounter > 1)
+	{
+		throw "too many docking stations (more than one D in house)";
+	}
 }
 House::House(const House & otherHouse) : House() {
 	name = otherHouse.name;
