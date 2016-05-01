@@ -161,7 +161,7 @@ void Simulator::run() {
 	// print scoring function.
 
 	//					algorithm, score per house,	trimmed_N, avg + spacers.
-	const int rowLengthInChars = 13 + (numOfAlgorithms + 2) * 10 + (1 + numOfAlgorithms + 2) + 1;
+	const int rowLengthInChars = 13 + (numOfAlgorithms + 1) * 10 + (1 + numOfAlgorithms + 2) + 1;
 	cout << setfill('-') << setw(rowLengthInChars) << '-' << setfill(' ') << endl; // dash-spacing line.
 	cout << "|" << setw(13) << " " << "|"; // algorithms name empty column title.
 	for (House& h : houses)
@@ -172,7 +172,7 @@ void Simulator::run() {
 		}
 		cout << setw(10) << left << h.name << "|";
 	}
-	cout << setw(10) << left << "trimmed_n" << "|" << setw(10) << left << "AVG" << "|" << endl;
+	cout << setw(10) << left << "AVG" << "|" << endl;
 
 	int avgForAlgorithm;
 	for (i = 0; i < numOfAlgorithms; i++)

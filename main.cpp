@@ -51,7 +51,11 @@ int main(int argc, char ** argv) {
 	// get algorithms.
 	//	get algorithms file list.
 	list<string> algorithmFilesList = reader.getAlgorithmFiles(errorsList);
-
+	if (algorithmFilesList.size() == 0)
+	{
+		cout << "No algorithms found." << endl;
+		//return 0;
+	}
 	//  load algorithms from files.
 	int sizeBefore, sizeAfter;
 	list<void *> dlList;

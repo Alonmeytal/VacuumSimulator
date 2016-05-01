@@ -24,7 +24,7 @@ House::House(string fileName) : House() {
 	houseFileStream >> maxSteps; // Reading house max Steps
 	houseFileStream >> rows; // Reading house rows
 	houseFileStream >> cols; // Reading house columns
-
+	houseFileStream.ignore();
 	// reading House.matrix from file.
 	matrix = new char*[rows]; // assigning rows of char[], according to House.rows
 	string row;
@@ -68,6 +68,13 @@ House::House(string fileName) : House() {
 			}
 
 		}
+	}
+	cout << name << endl;
+	for (i = 0; i < rows; i++)
+	{
+		for (j = 0; j < cols; j++)
+			cout << matrix[i][j];
+		cout << endl;
 	}
 
 	// rewriting boundaries into walls (in case they weren't)

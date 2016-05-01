@@ -31,19 +31,20 @@ Reader::Reader(int argc, char ** argv) {
 map<string,int> Reader::getSettings(list<string>& errorsList) {
 	int i = 0;
 	map<string,int> settings;
-	const char * pathToConfig = paths[strConfig].c_str();
+	const string pathToConfig = paths[strConfig] + "config.ini";
 	
-	if (access(pathToConfig, F_OK) != 0)
+	if (access(pathToConfig.c_str(), F_OK) != 0)
 	{
 		// file doesn't exist. usage should be printed and exit.
 		errorsList.push_back(usageString);
 		return settings;
 	}
+
     ifstream configStream(pathToConfig);
     if (configStream.is_open() == false)
     {
     	// file couldn't be opened for reading.
-    	errorsList.push_back("config.ini exists in '" + string(pathToConfig) + "' but cannot be opened");
+    	errorsList.push_back("config.ini exists in '" + paths[strConfig] + "' but cannot be opened");
     	return settings;
     }
 
@@ -124,7 +125,7 @@ list<string> Reader::getFilesFromPath(string path, string fileExtension, list<st
 	{
 		if (((string)fileEntity->d_name).find(fileExtension) != string::npos)
 		{
-			filePaths.push_back(path + "/" + fileEntity->d_name);
+			filePaths.push_back(path + fileEntity->d_name);
 		}
 	}
 
