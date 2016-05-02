@@ -24,7 +24,6 @@ using namespace std;
 class Reader {
 	map<string,string> paths;
 
-	const string usageString = "Usage: simulator [-config <config path>] [-house_path <house path>] [-algorithm_path <algorithm path>]";
 	const string strConfig = "-config";
 	const string strHouse = "-house_path";
 	const string strAlgorithms = "-algorithm_path";
@@ -38,6 +37,8 @@ class Reader {
 	vector<string> split(const string &s, char delim);
 
 public:
+	const string usageString = "Usage: simulator [-config <config path>] [-house_path <house path>] [-algorithm_path <algorithm path>]";
+
 	Reader(int argc, char ** argv);
 
 	map<string, int> getSettings(list<string>& errorsList);

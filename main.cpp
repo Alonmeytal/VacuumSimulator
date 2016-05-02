@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <cstring>
 #include <dlfcn.h>
+#include <stdlib.h> 
 using namespace std;
 
 // Interface(s) provided.
@@ -53,8 +54,9 @@ int main(int argc, char ** argv) {
 	list<string> algorithmFilesList = reader.getAlgorithmFiles(errorsList);
 	if (algorithmFilesList.size() == 0)
 	{
-		cout << "No algorithms found." << endl;
-		//return 0;
+		// No algorithms were found, printing usage and exiting.
+		cout << reader.usageString << endl;
+		return 0;
 	}
 	//  load algorithms from files.
 	int sizeBefore, sizeAfter;
@@ -84,7 +86,10 @@ int main(int argc, char ** argv) {
 	if (errorsList.size() > 0)
 	{
 		// "(If there is a problem with algorithm files, we do not continue to check houses.)"
-		errorsList.push_front("All algorithm files in target folder '" + reader.getAlgorithmPath() + "'cannot be opened or are invalid:");
+		char * fullPath = realpath(reader.getAlgorithmPath().c_str(), NULL);
+		string fullPathStr(fullPath);
+		errorsList.push_front("All algorithm files in target folder '" + fullPathStr + "'cannot be opened or are invalid:");
+		free(fullPath);
 		printErrors(errorsList);
 		return -1;
 	}
@@ -99,6 +104,12 @@ int main(int argc, char ** argv) {
 	// get houses.
 	//	get .house file list.
 	list<string> houseFilesList = reader.getHouseFiles(errorsList);
+	if (houseFilesList.size() == 0)
+	{
+		// No houses were found, printing usage and exiting.
+		cout << reader.usageString << endl;
+		return -1;
+	}
 	//	create houses from files.
 	list<House> houses;
 	errorsBefore = errorsList.size();
@@ -118,8 +129,12 @@ int main(int argc, char ** argv) {
 	if(errorsAfter - errorsBefore > 0)
 	{
 		// errors eccured during houses loading.
-		errorsList.push_front("All house files in target folder '" + reader.getHousePath() + "' cannot be opened or are invalid:");
+		char * fullPath = realpath(reader.getHousePath().c_str(),NULL);
+		string fullPathStr(fullPath);
+		errorsList.push_front("All house files in target folder '" + fullPathStr + "' cannot be opened or are invalid:");
+		free(fullPath);
 		printErrors(errorsList);
+		return -1;
 	}
 
 	// run simulator on houses and algorithms
