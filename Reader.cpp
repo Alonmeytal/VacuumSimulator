@@ -45,6 +45,7 @@ map<string,int> Reader::getSettings(list<string>& errorsList) {
     {
     	// file couldn't be opened for reading.
     	errorsList.push_back("config.ini exists in '" + paths[strConfig] + "' but cannot be opened");
+    	configStream.close();
     	return settings;
     }
 
@@ -83,6 +84,7 @@ map<string,int> Reader::getSettings(list<string>& errorsList) {
     	}
     	errorsList.push_back(line);
     }
+    configStream.close();
     return settings;
 }
 

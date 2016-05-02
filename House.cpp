@@ -16,19 +16,60 @@ using namespace std;
 
 House::House(string fileName) : House() {
 	ifstream houseFileStream(fileName); // opening file-stream to ($fileName) containing the house
+	string row;
 	if (!houseFileStream.is_open())
 	{
 		throw runtime_error("cannot open file");
 	}
-	getline(houseFileStream, name); // Reading house name
-	houseFileStream >> maxSteps; // Reading house max Steps
-	houseFileStream >> rows; // Reading house rows
-	houseFileStream >> cols; // Reading house columns
+
+	// Reading house name
+	name = fileName.substr(fileName.find_last_of('/')+1,fileName.find_last_of('.')-2);
+	getline(houseFileStream,row); // skipping name-description line.
+
+	int tempNumber;
+	// Reading house max Steps
+	getline(houseFileStream,row);
+	try
+	{
+		tempNumber = stoi(row);
+		if (tempNumber > 0)
+			maxSteps = tempNumber;
+	}
+	catch (invalid_argument)
+	{
+		throw runtime_error("line number 2 in house file shall be a positive number, found: " + row);
+	}
+
+	// Reading house rows
+	getline(houseFileStream,row);
+	try
+	{
+		tempNumber = stoi(row);
+		if (tempNumber > 0)
+			rows = tempNumber;
+	}
+	catch (invalid_argument)
+	{
+		throw runtime_error("line number 3 in house file shall be a positive number, found: " + row);
+	}
+
+	// Reading house columns
+	getline(houseFileStream,row);
+	try
+	{
+		tempNumber = stoi(row);
+		if (tempNumber > 0)
+			cols = tempNumber;
+	}
+	catch (invalid_argument)
+	{
+		throw runtime_error("line number 4 in house file shall be a positive number, found: " + row);
+	}
+
 	houseFileStream.ignore();
 	// reading House.matrix from file.
 	matrix = new char*[rows]; // assigning rows of char[], according to House.rows
-	string row;
-
+	
 	int i, j;
 	for (i = 0; i < rows; i++)
 	{
@@ -97,13 +138,7 @@ House::House(string fileName) : House() {
 			else if((!isdigit(matrix[i][j])) && (matrix[i][j] != 'W') && (matrix[i][j] != ' '))
 			{
 				// character is not a valid character and thus should throw an exception
-				//char * problem = '';
-				//string problem = "line number " + to_string(i) + " in house file shall be a positive number, found: " + matrix[i][j];
-				//cout << problem.c_str() << endl;
-				//sprintf(problem, "line number %d in house file shall be a positive number, found: %c", i, matrix[i][j]);
-				// = "line number " + i + " in house file shall be a positive number, found: " + matrix[i][j];
-				throw runtime_error("line number " + to_string(i) + " in house file shall be a positive number, found: " + matrix[i][j]);
-				//throw problem.c_str();
+				matrix[i][j] = ' ';
 			}
 		}
 	}
