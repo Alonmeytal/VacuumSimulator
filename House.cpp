@@ -18,7 +18,7 @@ House::House(string fileName) : House() {
 	ifstream houseFileStream(fileName); // opening file-stream to ($fileName) containing the house
 	if (!houseFileStream.is_open())
 	{
-		throw "cannot open file";
+		throw runtime_error("cannot open file");
 	}
 	getline(houseFileStream, name); // Reading house name
 	houseFileStream >> maxSteps; // Reading house max Steps
@@ -69,13 +69,6 @@ House::House(string fileName) : House() {
 
 		}
 	}
-	cout << name << endl;
-	for (i = 0; i < rows; i++)
-	{
-		for (j = 0; j < cols; j++)
-			cout << matrix[i][j];
-		cout << endl;
-	}
 
 	// rewriting boundaries into walls (in case they weren't)
 	for (i = 0; i < cols; i++)
@@ -100,24 +93,39 @@ House::House(string fileName) : House() {
 				dockingPoint = Point(i,j);
 				dockingCounter++;
 			}
-			else if (((matrix[i][j] < '1') && (matrix[i][j] > '9')) && ((matrix[i][j] != 'W') && (matrix[i][j] != ' ')))
+			//else if (((matrix[i][j] < '0') && (matrix[i][j] > '9')) && ((matrix[i][j] != 'W') && (matrix[i][j] != ' ')))
+			else if((!isdigit(matrix[i][j])) && (matrix[i][j] != 'W') && (matrix[i][j] != ' '))
 			{
 				// character is not a valid character and thus should throw an exception
-				char * problem;
-				sprintf(problem, "line number %d in house file shall be a positive number, found: %c", i, matrix[i][j]);
+				//char * problem = '';
+				//string problem = "line number " + to_string(i) + " in house file shall be a positive number, found: " + matrix[i][j];
+				//cout << problem.c_str() << endl;
+				//sprintf(problem, "line number %d in house file shall be a positive number, found: %c", i, matrix[i][j]);
 				// = "line number " + i + " in house file shall be a positive number, found: " + matrix[i][j];
-				throw problem;
+				throw runtime_error("line number " + to_string(i) + " in house file shall be a positive number, found: " + matrix[i][j]);
+				//throw problem.c_str();
 			}
 		}
 	}
 	if (dockingCounter == 0)
 	{
-		throw "missing docking station (no D in house)";
+		throw runtime_error("missing docking station (no D in house)");
 	}
 	if (dockingCounter > 1)
 	{
-		throw "too many docking stations (more than one D in house)";
+		throw runtime_error("too many docking stations (more than one D in house)");
 	}
+	/*
+	//printing house for testing.
+	cout << "\n" << name << endl;
+	for (i = 0; i < rows; i++)
+	{
+		for (j = 0; j < cols; j++)
+			cout << matrix[i][j];
+		cout << endl;
+	}
+	*/
+	houseFileStream.close(); // releasing .house file resource.
 }
 House::House(const House & otherHouse) : House() {
 	name = otherHouse.name;

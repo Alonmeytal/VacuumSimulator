@@ -108,9 +108,9 @@ int main(int argc, char ** argv) {
 		{
 			houses.emplace_back(HouseFile);	
 		}
-		catch (const char * problem)
+		catch (const exception& problem)
 		{
-			errorsList.push_back(HouseFile + ": " + problem);
+			errorsList.push_back(HouseFile + ": " + problem.what());
 		}
 	}
 	errorsAfter = errorsList.size();
