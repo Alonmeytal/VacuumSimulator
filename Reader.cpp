@@ -9,6 +9,7 @@
 using namespace std;
 
 #include <dirent.h>
+#include <cstring>
 
 #include "Reader.h"
 
@@ -24,6 +25,12 @@ Reader::Reader(int argc, char ** argv) {
 		for (int i = 1; i < ((argc % 2) ? argc : argc - 1); i += 2)
 		{
 			paths[argv[i]] = argv[i+1];
+			if(paths[argv[i]][strlen(argv[i+1])-1] != '/')
+			{
+				// path did not end with trailing '/', adding it.
+				paths[argv[i]].append("/");
+			}
+
 		}
 	}
 }
@@ -90,7 +97,7 @@ map<string,int> Reader::getSettings(list<string>& errorsList) {
 
 list<string> Reader::getHouseFiles(list<string>& errorsList) {
 	list<string> housesFromPath = getFilesFromPath(paths[strHouse], ".house", errorsList);
-	if ((paths[strAlgorithms] != "./") && (housesFromPath.size() == 0))
+	if ((paths[strHouse] != "./") && (housesFromPath.size() == 0))
 	{
 		// in-case path is empty (no houses), it is instructed to look for houses in the working directory.
 		housesFromPath = getFilesFromPath("./", ".house", errorsList);

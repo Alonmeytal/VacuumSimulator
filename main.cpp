@@ -56,7 +56,7 @@ int main(int argc, char ** argv) {
 	{
 		// No algorithms were found, printing usage and exiting.
 		cout << reader.usageString << endl;
-		return 0;
+		//return 0;
 	}
 	//  load algorithms from files.
 	int sizeBefore, sizeAfter;
@@ -90,10 +90,13 @@ int main(int argc, char ** argv) {
 		string fullPathStr(fullPath);
 		errorsList.push_front("All algorithm files in target folder '" + fullPathStr + "'cannot be opened or are invalid:");
 		free(fullPath);
+	}
+	if (AlgorithmFactory.size() == 0)
+	{
+		// No algorithms were registered.
 		printErrors(errorsList);
 		return -1;
 	}
-
 
 	list<AbstractAlgorithm*> algorithms;
 	for (auto algorithm : AlgorithmFactory)
@@ -128,15 +131,18 @@ int main(int argc, char ** argv) {
 
 	if(errorsAfter - errorsBefore > 0)
 	{
-		// errors eccured during houses loading.
+		// errors occured during houses loading.
 		char * fullPath = realpath(reader.getHousePath().c_str(),NULL);
 		string fullPathStr(fullPath);
 		errorsList.push_front("All house files in target folder '" + fullPathStr + "' cannot be opened or are invalid:");
 		free(fullPath);
-		printErrors(errorsList);
-		return -1;
 	}
-
+	if (houses.size() == 0)
+	{
+		// No houses were loaded properly.
+		printErrors(errorsList);
+		return -1;		
+	}
 	// run simulator on houses and algorithms
 	Simulator(settings, houses, algorithms).run();
 
