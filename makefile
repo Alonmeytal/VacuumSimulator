@@ -6,6 +6,8 @@ LFLAGS = -Wall $(DEBUG)
 
 simulator : $(OBJS)
 	$(CC) $(LFLAGS) $(OBJS) -o simulator -ldl
+
+all: simulator _305008864_A_.so _305008864_B_.so _305008864_C_.so
 	
 Point.o : Point.h Point.cpp
 	$(CC) $(CFLAGS) Point.cpp
@@ -27,6 +29,26 @@ Simulator.o : Simulator.cpp Simulator.cpp AbstractSensor.h AbstractAlgorithm.h H
 
 main.o : Simulator.h Simulation.h AbstractAlgorithm.h House.h AlgorithmFactory.h Reader.h
 	$(CC) $(CFLAGS) main.cpp -ldl
+
+_305008864_A.o: _305008864_A.cpp _305008864_A.h AbstractAlgorithm.h Direction.h AbstractSensor.h SensorInformation.h AlgorithmFactory.h
+	$(CC) $(CFLAGS) -Warray-bounds _305008864_A.cpp -mcmodel=large
+
+_305008864_A_.so: _305008864_A.o
+	g++ -shared -Wl,-soname,_305008864_A_.so -o _305008864_A_.so _305008864_A.o
+
+_305008864_B.o: _305008864_B.cpp _305008864_B.h AbstractAlgorithm.h Direction.h AbstractSensor.h SensorInformation.h AlgorithmFactory.h
+	$(CC) $(CFLAGS) -Warray-bounds _305008864_B.cpp -mcmodel=large
+
+_305008864_B_.so: _305008864_B.o
+	g++ -shared -Wl,-soname,_305008864_B_.so -o _305008864_B_.so _305008864_B.o
+
+_305008864_C.o: _305008864_C.cpp _305008864_C.h AbstractAlgorithm.h Direction.h AbstractSensor.h SensorInformation.h AlgorithmFactory.h
+	$(CC) $(CFLAGS) -Warray-bounds _305008864_C.cpp -mcmodel=large
+
+_305008864_C_.so: _305008864_C.o
+	g++ -shared -Wl,-soname,_305008864_C_.so -o _305008864_C_.so _305008864_C.o
+
+
 
 clean:
 	\rm *.o simulator

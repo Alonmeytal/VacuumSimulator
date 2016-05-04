@@ -26,6 +26,7 @@ using namespace std;
 #include "Reader.h"
 #include "Simulator.h"
 
+//extern map<string, algorithm_constructor *> AlgorithmFactory;
 extern map<string, algorithm_constructor *> AlgorithmFactory;
 
 void printErrors(list<string>& errorsList) {
@@ -62,18 +63,27 @@ int main(int argc, char ** argv) {
 	int sizeBefore, sizeAfter;
 	list<void *> dlList;
 
+	cout << "factory_address in main : " << &AlgorithmFactory << endl;
 	for (string algorithmFile : algorithmFilesList)
 	{
 		sizeBefore = AlgorithmFactory.size();
+		cout << AlgorithmFactory.size() << ": opening file - " << algorithmFile << endl;
 		void * dlHandler = dlopen(algorithmFile.c_str(), RTLD_NOW); // trying to load .so file.
 		if (dlHandler == NULL)
 		{
 			// dlHandler is empty because the file failed to load.
 			errorsList.push_back(algorithmFile + ": file cannot be loaded or is not a valid .so");
+			cout << dlerror() << endl;
+			continue;
 		}
 		else
 		{
 			dlList.push_back(dlHandler);
+		}
+		cout << "trying to print factory" << endl;
+		for (auto pair : AlgorithmFactory)
+		{
+			cout << pair.first << endl;
 		}
 		sizeAfter = AlgorithmFactory.size();
 		if (sizeAfter == sizeBefore)
@@ -88,7 +98,7 @@ int main(int argc, char ** argv) {
 		// "(If there is a problem with algorithm files, we do not continue to check houses.)"
 		char * fullPath = realpath(reader.getAlgorithmPath().c_str(), NULL);
 		string fullPathStr(fullPath);
-		errorsList.push_front("All algorithm files in target folder '" + fullPathStr + "'cannot be opened or are invalid:");
+		errorsList.push_front("All algorithm files in target folder '" + fullPathStr + "' cannot be opened or are invalid:");
 		free(fullPath);
 	}
 	if (AlgorithmFactory.size() == 0)
