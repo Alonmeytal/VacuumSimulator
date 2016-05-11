@@ -80,7 +80,7 @@ Direction _305008864_A::getOppositeDir(const Direction& currDir)const {
 } 
 
 _305008864_A::~_305008864_A() { }
-
+/*
 extern "C"{	
 	AbstractAlgorithm *maker(){
 		cout << "into maker" << endl;
@@ -99,3 +99,6 @@ extern "C"{
 	};
 	proxy p;
 }
+*/
+
+REGISTER_ALGORITHM (_305008864_A)

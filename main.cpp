@@ -15,11 +15,15 @@
 #include <cstring>
 #include <dlfcn.h>
 #include <stdlib.h> 
+#include <functional>
+#include <memory>
+ 
 using namespace std;
 
 // Interface(s) provided.
 #include "AbstractAlgorithm.h"
-#include "AlgorithmFactory.h"
+//#include "AlgorithmFactory.h"
+#include "AlgorithmRegistrar.h"
 // Actual Class(es)
 #include "House.h"
 // Function Objects
@@ -27,7 +31,6 @@ using namespace std;
 #include "Simulator.h"
 
 //extern map<string, algorithm_constructor *> AlgorithmFactory;
-extern map<string, algorithm_constructor *> AlgorithmFactory;
 
 void printErrors(list<string>& errorsList) {
 	for (string e : errorsList)
@@ -63,11 +66,11 @@ int main(int argc, char ** argv) {
 	int sizeBefore, sizeAfter;
 	list<void *> dlList;
 
-	cout << "factory_address in main : " << &AlgorithmFactory << endl;
+	//cout << "factory_address in main : " << &AlgorithmFactory << endl;
 	for (string algorithmFile : algorithmFilesList)
 	{
-		sizeBefore = AlgorithmFactory.size();
-		cout << AlgorithmFactory.size() << ": opening file - " << algorithmFile << endl;
+		sizeBefore = 0; //AlgorithmFactory.size();
+		//cout << AlgorithmFactory.size() << ": opening file - " << algorithmFile << endl;
 		void * dlHandler = dlopen(algorithmFile.c_str(), RTLD_NOW); // trying to load .so file.
 		if (dlHandler == NULL)
 		{
@@ -80,12 +83,14 @@ int main(int argc, char ** argv) {
 		{
 			dlList.push_back(dlHandler);
 		}
+		/*
 		cout << "trying to print factory" << endl;
 		for (auto pair : AlgorithmFactory)
 		{
 			cout << pair.first << endl;
 		}
-		sizeAfter = AlgorithmFactory.size();
+		*/
+		sizeAfter = 0; //AlgorithmFactory.size();
 		if (sizeAfter == sizeBefore)
 		{
 			// AlgorithmFactory didn't change and so no new algorithm was registered.
@@ -101,19 +106,21 @@ int main(int argc, char ** argv) {
 		errorsList.push_front("All algorithm files in target folder '" + fullPathStr + "' cannot be opened or are invalid:");
 		free(fullPath);
 	}
+	/*
 	if (AlgorithmFactory.size() == 0)
 	{
 		// No algorithms were registered.
 		printErrors(errorsList);
 		return -1;
 	}
-
+	*/
 	list<AbstractAlgorithm*> algorithms;
+	/*
 	for (auto algorithm : AlgorithmFactory)
 	{
 		algorithms.push_back(algorithm.second()); //algorithm_constructor); // maybe parenthesis are obsolete.
 	}
-
+	*/
 	// get houses.
 	//	get .house file list.
 	list<string> houseFilesList = reader.getHouseFiles(errorsList);

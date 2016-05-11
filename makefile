@@ -1,11 +1,12 @@
-OBJS = main.o House.o Point.o Sensor.o Reader.o Simulation.o Simulator.o 
+.DEFAULT_GOAL := all
+OBJS = main.o House.o Point.o Sensor.o Reader.o Simulation.o Simulator.o AlgorithmRegistrar.o AlgorithmRegistration.o
 CC = g++
 DEBUG = -g
-CFLAGS = -Wall -c -O2 -std=c++11 -pedantic -pthread $(DEBUG)
+CFLAGS = -Wall -c -O2 -std=c++14 -pedantic -pthread $(DEBUG)
 LFLAGS = -Wall $(DEBUG)
 
 simulator : $(OBJS)
-	$(CC) $(LFLAGS) $(OBJS) -o simulator -ldl
+	$(CC) -rdynamic $(LFLAGS) $(OBJS) -o simulator -ldl
 
 all: simulator _305008864_A_.so _305008864_B_.so _305008864_C_.so
 	
@@ -27,10 +28,16 @@ Simulation.o : Simulation.h Simulation.cpp Direction.h AbstractSensor.h Abstract
 Simulator.o : Simulator.cpp Simulator.cpp AbstractSensor.h AbstractAlgorithm.h House.h Simulation.h
 	$(CC) $(CFLAGS) Simulator.cpp
 
-main.o : Simulator.h Simulation.h AbstractAlgorithm.h House.h AlgorithmFactory.h Reader.h
+AlgorithmRegistrar.o : AlgorithmRegistrar.cpp AlgorithmRegistrar.h AlgorithmRegistration.h AbstractAlgorithm.h
+	$(CC) $(CFLAGS) AlgorithmRegistrar.cpp
+
+AlgorithmRegistration.o : AlgorithmRegistration.cpp AlgorithmRegistrar.h AbstractAlgorithm.h
+	$(CC) $(CFLAGS) AlgorithmRegistration.cpp
+
+main.o : Simulator.h Simulation.h AbstractAlgorithm.h House.h Reader.h AlgorithmRegistrar.h
 	$(CC) $(CFLAGS) main.cpp -ldl
 
-_305008864_A.o: _305008864_A.cpp _305008864_A.h AbstractAlgorithm.h Direction.h AbstractSensor.h SensorInformation.h AlgorithmFactory.h
+_305008864_A.o: _305008864_A.cpp _305008864_A.h AbstractAlgorithm.h Direction.h AbstractSensor.h SensorInformation.h AlgorithmRegistration.h
 	$(CC) $(CFLAGS) -Warray-bounds _305008864_A.cpp -mcmodel=large
 
 _305008864_A_.so: _305008864_A.o

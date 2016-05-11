@@ -1,14 +1,18 @@
 #ifndef _305008864_A_H
 #define _305008864_A_H
+
 using namespace std;
+
 #include <array>
 #include <stack>
 #include <climits>
 #include <memory>
+#include <functional>
 
 #include "Direction.h"
 #include "AbstractAlgorithm.h"
 #include "AlgorithmFactory.h"
+#include "AlgorithmRegistration.h"
 
 class _305008864_A: public AbstractAlgorithm
 {
