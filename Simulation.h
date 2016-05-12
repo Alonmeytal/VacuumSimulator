@@ -5,21 +5,25 @@
  * username2:chenanily
  * ID2:305008864
  */
-
 #ifndef SIMULATION_H_
 #define SIMULATION_H_
+
+#include <iostream>
+#include <string>
+#include <memory>
+
 #include "AbstractAlgorithm.h"
 #include "AbstractSensor.h"
 #include "Sensor.h"
 #include "Point.h"
 #include "Direction.h"
 #include "House.h"
-#include <string>
+
 using namespace std;
 
 class Simulation
 {
-	AbstractAlgorithm * algorithm;
+	unique_ptr<AbstractAlgorithm> algorithm;
 	House house;
 	map<string, int> * settings;
 
@@ -31,13 +35,16 @@ public:
 	int dirtCollected; // dirt collected so far.
 	bool hasFinished; // flag for when the robot finishes cleaning.
 
-	Simulation(AbstractAlgorithm * algo, House home, map<string,int> * s) :
-		algorithm(algo), house(home), settings(s), currentLocation(home.dockingPoint), sensor(nullptr), steps(0), dirtCollected(0), hasFinished(false)
+	Simulation(unique_ptr<AbstractAlgorithm> algo, House home, map<string,int> * s) :
+		 algorithm(std::move(algo)), house(home), settings(s), currentLocation(home.dockingPoint), sensor(nullptr), steps(0), dirtCollected(0), hasFinished(false)
 	{
 		// TO-DO : fill other class memebers.
+		//algorithm = make_unique(algo);
 		batteryMode = s->find("BatteryCapacity")->second;
 		sensor = new Sensor(&house, &currentLocation);
-		algo->setSensor(*sensor);
+		cout << "here" << endl;
+		algorithm->setSensor(*sensor);
+		cout << "there" << endl;
 	}
 
 	int runStep(); // runs the algorithm for a single step, updating currentLocation, batteryMode, and house dirt-levels.

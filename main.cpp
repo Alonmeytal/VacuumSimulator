@@ -63,13 +63,14 @@ int main(int argc, char ** argv) {
 		//return 0;
 	}
 	//  load algorithms from files.
+	AlgorithmRegistrar& regi = AlgorithmRegistrar::getInstance(); 
 	int sizeBefore, sizeAfter;
 	list<void *> dlList;
 
 	//cout << "factory_address in main : " << &AlgorithmFactory << endl;
 	for (string algorithmFile : algorithmFilesList)
 	{
-		sizeBefore = 0; //AlgorithmFactory.size();
+		sizeBefore = regi.size(); //AlgorithmFactory.size();
 		//cout << AlgorithmFactory.size() << ": opening file - " << algorithmFile << endl;
 		void * dlHandler = dlopen(algorithmFile.c_str(), RTLD_NOW); // trying to load .so file.
 		if (dlHandler == NULL)
@@ -90,7 +91,7 @@ int main(int argc, char ** argv) {
 			cout << pair.first << endl;
 		}
 		*/
-		sizeAfter = 0; //AlgorithmFactory.size();
+		sizeAfter = regi.size(); //AlgorithmFactory.size();
 		if (sizeAfter == sizeBefore)
 		{
 			// AlgorithmFactory didn't change and so no new algorithm was registered.
@@ -114,13 +115,7 @@ int main(int argc, char ** argv) {
 		return -1;
 	}
 	*/
-	list<AbstractAlgorithm*> algorithms;
-	/*
-	for (auto algorithm : AlgorithmFactory)
-	{
-		algorithms.push_back(algorithm.second()); //algorithm_constructor); // maybe parenthesis are obsolete.
-	}
-	*/
+	//list<unique_ptr<AbstractAlgorithm>> algorithms = regi.getAlgorithms();
 	// get houses.
 	//	get .house file list.
 	list<string> houseFilesList = reader.getHouseFiles(errorsList);
@@ -161,7 +156,7 @@ int main(int argc, char ** argv) {
 		return -1;		
 	}
 	// run simulator on houses and algorithms
-	Simulator(settings, houses, algorithms).run();
+	Simulator(settings, houses).run();
 
 	for (void * dlHandler : dlList)
 	{

@@ -24,19 +24,16 @@ void Simulator::run() {
 	int numOfHouses = houses.size();
 	int numOfAlgorithms = algorithms.size();
 
+	list<unique_ptr<AbstractAlgorithm>> algorithms = AlgorithmRegistrar::getInstance().getAlgorithms();
+
 	// ! run a simulation of the algorithm on the house
 	list<Simulation> simulationsList;
 
 	// setting up simulation steps counting table : (house, algorithm) for scoring purposes.
-	int ** simulationSteps = new int*[numOfHouses];
+	map <int, map <int, int>> simulationSteps;
 	// also, setting up simulation scoring table.
-	int ** simulationScores = new int*[numOfHouses];
+	map <int, map <int, int>> simulationScores; 
 
-	for (i = 0; i < numOfHouses; i++)
-	{
-		simulationSteps[i] = new int[numOfAlgorithms];
-		simulationScores[i] = new int[numOfAlgorithms];
-	}
 	// initializing counting table values.
 	for (i = 0; i < numOfHouses; i++)
 	{
@@ -53,13 +50,13 @@ void Simulator::run() {
 	for (House& currentHouse : houses)
 	{
 		// for each algorithm;
-		for (AbstractAlgorithm * currentAlgorithm : algorithms)
+		for (auto& currentAlgorithm : algorithms)
 		{
 			// create a simulation instance that will run currentAlgorithm on currentHouse;
-			simulationsList.emplace_back(currentAlgorithm, currentHouse, &settings);
+			simulationsList.emplace_back(std::move(currentAlgorithm), currentHouse, &settings);
 		}
 
-		int * positionInCompetition = new int[numOfAlgorithms];
+		vector<int> positionInCompetition(numOfAlgorithms);
 
 		// should now run all algorithms on house, in a "round-robin" fashion.
 		stepsTaken = 0; // how many steps has the simulation done so far.
@@ -152,7 +149,6 @@ void Simulator::run() {
 			j++;
 		}
 
-		delete [] positionInCompetition;
 		// emptying simulationsList for next house (next round of simulations).
 		simulationsList.clear();
 		i++;
@@ -193,13 +189,4 @@ void Simulator::run() {
 		cout << "|" << setw(10) << setprecision(3) << right << avgForAlgorithm/numOfHouses << "|" << endl;
 		cout << setfill('-') << setw(rowLengthInChars) << " " << setfill(' ') << endl; // dash-spacing line.
 	}
-
-	// freeing simlationSteps table.
-	for (i = 0; i < numOfHouses; i++)
-	{
-		delete [] simulationSteps[i];
-		delete [] simulationScores[i];
-	}
-	delete [] simulationSteps;
-	delete [] simulationScores;
 }

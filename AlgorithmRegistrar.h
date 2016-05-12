@@ -1,3 +1,6 @@
+#ifndef __ALGORITHM_REGISTRAR_H_
+#define __ALGORITHM_REGISTRAR_H_
+
 #include <list>
 #include <functional>
 #include <memory>
@@ -38,3 +41,5 @@ public:
 private:
     static AlgorithmRegistrar instance;
 };
+
+#endif

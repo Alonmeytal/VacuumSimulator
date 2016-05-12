@@ -13,12 +13,14 @@
 #include <array>
 #include <algorithm>
 #include <cstring>
+#include <memory>
 
 using namespace std;
 
 // Interface(s) provided.
 #include "AbstractSensor.h"
 #include "AbstractAlgorithm.h"
+#include "AlgorithmRegistrar.h"
 // Actual Class(es)
 #include "House.h"
 #include "Simulation.h"
@@ -26,7 +28,7 @@ using namespace std;
 class Simulator {
 	map<string,int> settings;
 	list<House> houses;
-	list<AbstractAlgorithm*> algorithms;
+	list<unique_ptr<AbstractAlgorithm>> algorithms;
 
 	int score(int positionInCompetition, int winnerNumSteps, int thisNumSteps, int sumDirtInHouse, int dirtCollected, bool isBackInDocking)
 	{
@@ -35,6 +37,6 @@ class Simulator {
 	}
 
 public:
- 	Simulator(map<string, int>& _settings, list<House>& _houses, list<AbstractAlgorithm*>& _algorithms) : settings(_settings), houses(_houses), algorithms(_algorithms) {};
+ 	Simulator(map<string, int>& _settings, list<House>& _houses) : settings(_settings), houses(_houses) {};
 	void run();
 };
