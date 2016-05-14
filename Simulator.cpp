@@ -20,11 +20,12 @@ using namespace std;
 
 void Simulator::run() {
 	int i, j;
+
+	list<unique_ptr<AbstractAlgorithm>> algorithms = AlgorithmRegistrar::getInstance().getAlgorithms();
+	
 	// count houses and algorithms for future reference.
 	int numOfHouses = houses.size();
 	int numOfAlgorithms = algorithms.size();
-
-	list<unique_ptr<AbstractAlgorithm>> algorithms = AlgorithmRegistrar::getInstance().getAlgorithms();
 
 	// ! run a simulation of the algorithm on the house
 	list<Simulation> simulationsList;
@@ -53,10 +54,10 @@ void Simulator::run() {
 		for (auto& currentAlgorithm : algorithms)
 		{
 			// create a simulation instance that will run currentAlgorithm on currentHouse;
-			simulationsList.emplace_back(std::move(currentAlgorithm), currentHouse, &settings);
+			simulationsList.emplace_back(std::move(currentAlgorithm), currentHouse, settings);
 		}
 
-		vector<int> positionInCompetition(numOfAlgorithms);
+		vector<int> positionInCompetition(numOfAlgorithms,0);
 
 		// should now run all algorithms on house, in a "round-robin" fashion.
 		stepsTaken = 0; // how many steps has the simulation done so far.
@@ -172,12 +173,16 @@ void Simulator::run() {
 
 	// algorithms' results;
 	int avgForAlgorithm;
+	// getting algorithm's names' iterator
+	const list<string>& algorithmNames = AlgorithmRegistrar::getInstance().getAlgorithmNames();
+	auto algorithmName = algorithmNames.begin();
+
 	for (i = 0; i < numOfAlgorithms; i++)
 	{
 		avgForAlgorithm = 0;
 		// for each algorithm.
 		j = 0;
-		cout << "|" << setw(13) << left << "algo_name" + i << "|";
+		cout << "|" << setw(13) << left << *algorithmName << "|";
 		for (House h : houses)
 		{
 			// for each house.
@@ -187,6 +192,8 @@ void Simulator::run() {
 			j++;
 		}
 		cout << "|" << setw(10) << setprecision(3) << right << avgForAlgorithm/numOfHouses << "|" << endl;
-		cout << setfill('-') << setw(rowLengthInChars) << " " << setfill(' ') << endl; // dash-spacing line.
+		cout << setfill('-') << setw(rowLengthInChars) << " " << setfill(' ') << endl; // dash-spacing line
+		algorithmName++;
 	}
+	//cout << "Simulator finished" << endl;
 }

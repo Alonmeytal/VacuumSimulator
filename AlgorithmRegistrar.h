@@ -14,13 +14,14 @@ class AlgorithmRegistrar {
     void registerAlgorithm(function<unique_ptr<AbstractAlgorithm>()> algorithmFactory) {
         instance.algorithmFactories.push_back(algorithmFactory);
     }
+
+public:
+    friend class AlgorithmRegistration;
+    enum {ALGORITHM_REGISTERED_SUCCESSFULY = 0, FILE_CANNOT_BE_LOADED = -1, NO_ALGORITHM_REGISTERED = -2};
     void setNameForLastAlgorithm(const string& algorithmName) {
         //assert(algorithmFactories.size()-1 == algorithmNames.size());
         algorithmNames.push_back(algorithmName);
     }
-public:
-    friend class AlgorithmRegistration;
-    enum {ALGORITHM_REGISTERED_SUCCESSFULY = 0, FILE_CANNOT_BE_LOADED = -1, NO_ALGORITHM_REGISTERED = -2};
     int loadAlgorithm(const string& path, const string& so_file_name_without_so_suffix);
     list<unique_ptr<AbstractAlgorithm>> getAlgorithms()const {
         list<unique_ptr<AbstractAlgorithm>> algorithms;

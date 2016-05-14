@@ -18,7 +18,7 @@ int Simulation::runStep(){
 	if (this->hasFinished) {
 		return 2;
 	}
-	if (batteryMode < settings->find("BatteryConsumptionRate")->second) {
+	if (batteryMode < settings.find("BatteryConsumptionRate")->second) {
 		return -1;
 	}
 	SensorInformation currentSensorInfo;
@@ -33,7 +33,7 @@ int Simulation::runStep(){
 		house.vacuum(currentLocation.getX(), currentLocation.getY());
 	}
 	steps++;
-	batteryMode -= settings->find("BatteryConsumptionRate")->second;
+	batteryMode -= settings.find("BatteryConsumptionRate")->second;
 	dirtCollected++;
 	switch (wantedDir)
 	{

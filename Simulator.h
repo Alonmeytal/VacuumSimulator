@@ -35,7 +35,6 @@ class Simulator {
 		return std::max(0, 2000 - ((positionInCompetition - 1) * 50) + ((winnerNumSteps - thisNumSteps) * 10)
 			- ((sumDirtInHouse - dirtCollected) * 3) + (isBackInDocking ? 50 : -200));
 	}
-
 public:
  	Simulator(map<string, int>& _settings, list<House>& _houses) : settings(_settings), houses(_houses) {};
 	void run();
