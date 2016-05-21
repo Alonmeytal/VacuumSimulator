@@ -27,6 +27,8 @@ class Reader {
 	const string strConfig = "-config";
 	const string strHouse = "-house_path";
 	const string strAlgorithms = "-algorithm_path";
+	const string strScore = "-score_formula";
+	const string strThreads = "-threads";
 
 	Reader(const Reader& r) = delete; // copy c'tor
 	Reader(const Reader&& r) = delete; // move c'tor
@@ -37,7 +39,7 @@ class Reader {
 	vector<string> split(const string &s, char delim);
 
 public:
-	const string usageString = "Usage: simulator [-config <config path>] [-house_path <house path>] [-algorithm_path <algorithm path>]";
+	const string usageString = "Usage: simulator [-config <config path>] [-house_path <house path>] [-algorithm_path <algorithm path>] [-score_formula <score .so path>] [-threads <num threads>]";
 
 	Reader(int argc, char ** argv);
 
@@ -48,4 +50,6 @@ public:
 	string getConfigPath() { return paths[strConfig]; }
 	string getHousePath() { return paths[strHouse]; }
 	string getAlgorithmPath() { return paths[strAlgorithms]; }
+	string getScorePath() { return paths[strScore]; }
+	int getNumberOfThreads();
 };

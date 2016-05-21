@@ -18,6 +18,7 @@ Reader::Reader(int argc, char ** argv) {
 	paths[strConfig] = "./"; // -config argument default value.
 	paths[strHouse] = "./"; // -house_path argument default value.
 	paths[strAlgorithms] = "./"; // - algorithm_path default value
+    paths[strScore] = "-1";
 
 	if ((argc > 1) && (argc % 2))
 	{
@@ -36,7 +37,7 @@ Reader::Reader(int argc, char ** argv) {
 }
 
 map<string,int> Reader::getSettings(list<string>& errorsList) {
-	int i = 0;
+	int argumentsRead = 0, badArgumentsRead = 0;
 	map<string,int> settings;
 	const string pathToConfig = paths[strConfig] + "config.ini";
 	
@@ -44,6 +45,10 @@ map<string,int> Reader::getSettings(list<string>& errorsList) {
 	{
 		// file doesn't exist. usage should be printed and exit.
 		errorsList.push_back(usageString);
+		char * fullPath = realpath(paths[strConfig].c_str(), NULL);
+		string fullPathStr(fullPath);
+		errorsList.push_back("cannot find config.ini file in '" + fullPathStr + "'");
+		free(fullPath);
 		return settings;
 	}
 
@@ -56,7 +61,10 @@ map<string,int> Reader::getSettings(list<string>& errorsList) {
     	return settings;
     }
 
-    string line;
+    string line, missingLine, badLine;
+  	list<string> missingArgumentsList {"MaxStepsAfterWinner", "BatteryCapacity", "BatteryConsumptionRate", "BatteryRechargeRate"};
+  	list<string> badArgumentsList;
+    // trying to read arguments
     while (getline(configStream, line))
     {
     	vector<string> tokens = split(line, '=');
@@ -64,32 +72,52 @@ map<string,int> Reader::getSettings(list<string>& errorsList) {
     	{
     		continue;
     	}
-    	settings[trim(tokens[0])] = std::stoi(tokens[1]);
-    	i++;
+    	string settingKey = trim(tokens[0]);
+    	try
+    	{
+    		// trying to convert string value to int. looking for bad values.
+    		int tempSetting = std::stoi(tokens[1]);
+    		if (tempSetting > 0)
+    		{
+    			settings[settingKey] = tempSetting;
+    			missingArgumentsList.remove(settingKey); // removing found argument from missing's list.
+    		}
+    		else
+    		{
+    			badArgumentsRead++;
+    			badArgumentsList.push_back(settingKey);
+    		}	
+    	}
+    	catch (invalid_argument)
+    	{
+    		badArgumentsRead++;
+			badArgumentsList.push_back(settingKey);
+    	}
+    	argumentsRead++;
     }
 
-    if (i < 4)
+    // outputing missing parameters
+    if (argumentsRead < 4)
     {
-    	int missingArguments = 4- i;
+    	int missingArguments = 4 - argumentsRead;
 
-    	line = "config.ini missing " + to_string(missingArguments) + " parameter(s):";
-    	if (settings.count("MaxStepsAfterWinner") == 0)
+    	missingLine = "config.ini missing " + to_string(missingArguments) + " parameter(s): ";
+    	for (string missingSetting : missingArgumentsList)
     	{
-    		line += (i++ < 4) ? " MaxStepsAfterWinner," : " MaxStepsAfterWinner";
+ 		   	missingLine += missingSetting + ", ";
     	}
-    	if (settings.count("BatteryCapacity") == 0)
+    	errorsList.push_back(missingLine.erase(missingLine.find_last_of("' ") - 1));
+    }
+    // outputing bad valued parameters.
+    if (badArgumentsRead > 0)
+    {
+    	badLine = "config.ini having bad values for " + to_string(badArgumentsRead) + " parameter(s): ";
+    	
+    	for (string badSetting : badArgumentsList)
     	{
-    		line += (i++ < 4 ) ? " BatteryCapacity," : " BatteryCapacity";
+    		badLine +=  badSetting + ", ";
     	}
-    	if (settings.count("BatteryConsumptionRate") == 0)
-    	{
-    		line += (i++ < 4 ) ? " BatteryConsumptionRate," : " BatteryConsumptionRate";
-    	}
-    	if (settings.count("BatteryRechargeRate") == 0)
-    	{
-    		line += " BatteryRechargeRate";
-    	}
-    	errorsList.push_back(line);
+    	errorsList.push_back(badLine.erase(badLine.find_last_of("' ") - 1));
     }
     configStream.close();
     return settings;
@@ -140,6 +168,11 @@ list<string> Reader::getFilesFromPath(string path, string fileExtension, list<st
 
 	// returning list of all files found (might be empty).
 	return filePaths;
+}
+
+int Reader::getNumberOfThreads()
+{
+    return 1;
 }
 
 // from recitation.

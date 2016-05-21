@@ -13,16 +13,16 @@
 #include <array>
 #include <algorithm>
 #include <cstring>
-#include <dlfcn.h>
-#include <stdlib.h> 
 #include <functional>
 #include <memory>
+
+#include <dlfcn.h>
+#include <stdlib.h> 
  
 using namespace std;
 
 // Interface(s) provided.
 #include "AbstractAlgorithm.h"
-//#include "AlgorithmFactory.h"
 #include "AlgorithmRegistrar.h"
 // Actual Class(es)
 #include "House.h"
@@ -39,19 +39,71 @@ void printErrors(list<string>& errorsList) {
 	}
 }
 
+int defaultScore(const map<string,int>& score_params)
+{
+	return -1;
+}
+
 int main(int argc, char ** argv) {
 	Reader reader(argc, argv);
 	list<string> errorsList;
 	int errorsBefore, errorsAfter;
-	// get settings.
-	errorsBefore = errorsList.size();
+
+	// Reading Settings from config.ini.
 	map<string, int> settings = reader.getSettings(errorsList);
-	errorsAfter = errorsList.size();
-	if (errorsAfter - errorsBefore > 0)
+	
+	// errors were found, printing errors and exiting.
+	if (errorsList.size() > 0)
 	{
 		printErrors(errorsList);
 		return -1;
 	}
+
+	// Dynamically loading scoring function from score_formula.so.
+	//std::function<int(const map<string,int>&)> score;
+	int (*score)(const map<string,int>&);
+	void * scoreDL = NULL;
+	if (reader.getScorePath() == "-1")
+	{
+		// -score_formula was not provided, scoring fuction is the default formula.
+		score = defaultScore;
+	}
+	else
+	{
+		// -score_formula was provided
+		string scoringFilePath = reader.getScorePath() + "score_formula.so";
+		// score formula full path
+		char * fullPath = realpath(reader.getScorePath().c_str(), NULL);
+		string fullPathStr(fullPath);
+		free(fullPath);
+		if (access(scoringFilePath.c_str(), F_OK) != 0)
+		{
+			// score_formula doesn't exist, printinf usage, error and exiting.
+			errorsList.push_back(reader.usageString);
+			errorsList.push_back("cannot find score_formula.so file in '" + fullPathStr + "'");
+			return -1;
+		}
+		// score_formula.so exists, trying to open it.
+		scoreDL = dlopen(scoringFilePath.c_str(), RTLD_NOW);
+		if (scoreDL == NULL)
+		{
+			// score_formula.so could not be loaded, printing error
+			errorsList.push_back("score_formula.so exists in '" + fullPathStr + "' but cannot be opened or is not a valid .so");
+			return -1;
+		}
+		else
+		{
+			score = (int (*)(const map<string,int>&)) dlsym(scoreDL, "calc_score");
+			if (score == NULL)
+			{
+				// symbol couldn't be found.
+				errorsList.push_back("score_formula.so is a valid .so but it does not have a valid score formula");
+				dlclose(scoreDL);
+				return -1;
+			}
+		}
+	}
+	
 
 	// get algorithms.
 	//	get algorithms file list.
@@ -155,7 +207,13 @@ int main(int argc, char ** argv) {
 
 	// run simulator on houses and algorithms
 	Simulator(settings, houses).run();
-	
+
+	// releasing scoring function point and .so
+	if (dlclose(scoreDL))
+	{
+		return -1;
+	}
+
 	for (void * dlHandler : dlList)
 	{
 		if (dlclose(dlHandler))
