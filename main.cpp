@@ -81,6 +81,7 @@ int main(int argc, char ** argv) {
 			// score_formula doesn't exist, printinf usage, error and exiting.
 			errorsList.push_back(reader.usageString);
 			errorsList.push_back("cannot find score_formula.so file in '" + fullPathStr + "'");
+			printErrors(errorsList);
 			return -1;
 		}
 		// score_formula.so exists, trying to open it.
@@ -89,6 +90,7 @@ int main(int argc, char ** argv) {
 		{
 			// score_formula.so could not be loaded, printing error
 			errorsList.push_back("score_formula.so exists in '" + fullPathStr + "' but cannot be opened or is not a valid .so");
+			printErrors(errorsList);
 			return -1;
 		}
 		else
@@ -99,6 +101,7 @@ int main(int argc, char ** argv) {
 				// symbol couldn't be found.
 				errorsList.push_back("score_formula.so is a valid .so but it does not have a valid score formula");
 				dlclose(scoreDL);
+				printErrors(errorsList);
 				return -1;
 			}
 		}
