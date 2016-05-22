@@ -33,19 +33,19 @@ class Reader {
 	Reader(const Reader& r) = delete; // copy c'tor
 	Reader(const Reader&& r) = delete; // move c'tor
 
-	list<string> getFilesFromPath(string path, string fileExtension, list<string>& errorsList);
+	list<string> getFilesFromPath(string path, string fileExtension);
 
 	string trim(string& str);
 	vector<string> split(const string &s, char delim);
 
 public:
-	const string usageString = "Usage: simulator [-config <config path>] [-house_path <house path>] [-algorithm_path <algorithm path>] [-score_formula <score .so path>] [-threads <num threads>]";
+	const string usageString = "Usage: simulator [-config <config path>] [-house_path <house path>]\n[-algorithm_path <algorithm path>] [-score_formula <score .so path>]\n[-threads <num threads>]";
 
 	Reader(int argc, char ** argv);
 
-	map<string, int> getSettings(list<string>& errorsList);
-	list<string> getHouseFiles(list<string>& errorsList);
-	list<string> getAlgorithmFiles(list<string>& errorsList);
+	map<string, int> getSettings();
+	list<string> getHouseFiles();
+	list<string> getAlgorithmFiles();
 
 	string getConfigPath() { return paths[strConfig]; }
 	string getHousePath() { return paths[strHouse]; }

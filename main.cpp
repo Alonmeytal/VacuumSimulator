@@ -29,15 +29,7 @@ using namespace std;
 // Function Objects
 #include "Reader.h"
 #include "Simulator.h"
-
-//extern map<string, algorithm_constructor *> AlgorithmFactory;
-
-void printErrors(list<string>& errorsList) {
-	for (string e : errorsList)
-	{
-		cout << e << endl;
-	}
-}
+#include "Errorton.h"
 
 int defaultScore(const map<string,int>& score_params)
 {
@@ -46,16 +38,14 @@ int defaultScore(const map<string,int>& score_params)
 
 int main(int argc, char ** argv) {
 	Reader reader(argc, argv);
-	list<string> errorsList;
-	int errorsBefore, errorsAfter;
+	Errorton& e = Errorton::getInstance();
 
 	// Reading Settings from config.ini.
-	map<string, int> settings = reader.getSettings(errorsList);
+	map<string, int> settings = reader.getSettings();
 	
 	// errors were found, printing errors and exiting.
-	if (errorsList.size() > 0)
+	if (e.reports() > 0)
 	{
-		printErrors(errorsList);
 		return -1;
 	}
 
@@ -79,9 +69,8 @@ int main(int argc, char ** argv) {
 		if (access(scoringFilePath.c_str(), F_OK) != 0)
 		{
 			// score_formula doesn't exist, printinf usage, error and exiting.
-			errorsList.push_back(reader.usageString);
-			errorsList.push_back("cannot find score_formula.so file in '" + fullPathStr + "'");
-			printErrors(errorsList);
+			e.reportError('u', reader.usageString);
+			e.reportError('u', "cannot find score_formula.so file in '" + fullPathStr + "'");
 			return -1;
 		}
 		// score_formula.so exists, trying to open it.
@@ -89,8 +78,7 @@ int main(int argc, char ** argv) {
 		if (scoreDL == NULL)
 		{
 			// score_formula.so could not be loaded, printing error
-			errorsList.push_back("score_formula.so exists in '" + fullPathStr + "' but cannot be opened or is not a valid .so");
-			printErrors(errorsList);
+			e.reportError('u', "score_formula.so exists in '" + fullPathStr + "' but cannot be opened or is not a valid .so");
 			return -1;
 		}
 		else
@@ -99,9 +87,8 @@ int main(int argc, char ** argv) {
 			if (score == NULL)
 			{
 				// symbol couldn't be found.
-				errorsList.push_back("score_formula.so is a valid .so but it does not have a valid score formula");
+				e.reportError('u',"score_formula.so exists in '" + fullPathStr + "' but cannot be opened or is not a valid .so");
 				dlclose(scoreDL);
-				printErrors(errorsList);
 				return -1;
 			}
 		}
@@ -110,12 +97,17 @@ int main(int argc, char ** argv) {
 
 	// get algorithms.
 	//	get algorithms file list.
-	list<string> algorithmFilesList = reader.getAlgorithmFiles(errorsList);
+	char * fullPath = realpath(reader.getAlgorithmPath().c_str(), NULL);
+	string fullAlgoPath(fullPath);
+	free(fullPath);
+
+	list<string> algorithmFilesList = reader.getAlgorithmFiles();
 	if (algorithmFilesList.size() == 0)
 	{
 		// No algorithms were found, printing usage and exiting.
-		cout << reader.usageString << endl;
-		//return 0;
+		e.reportError('u', reader.usageString);
+		e.reportError('u', "cannot find algorithm files in '" + fullAlgoPath + "'");
+		return -1;
 	}
 	//  load algorithms from files.
 	AlgorithmRegistrar& regi = AlgorithmRegistrar::getInstance(); 
@@ -124,14 +116,15 @@ int main(int argc, char ** argv) {
 
 	for (string algorithmFile : algorithmFilesList)
 	{
+		string algorithmName = algorithmFile.substr(algorithmFile.find_last_of('/')+1);
 		sizeBefore = regi.size();
 	
 		void * dlHandler = dlopen(algorithmFile.c_str(), RTLD_NOW); // trying to load .so file.
 		if (dlHandler == NULL)
 		{
 			// dlHandler is empty because the file failed to load.
-			errorsList.push_back(algorithmFile + ": file cannot be loaded or is not a valid .so");
-			cout << dlerror() << endl;
+			e.reportError('a', algorithmName + ".so: file cannot be loaded or is not a valid .so");
+			//cout << dlerror() << endl;
 			continue;
 		}
 		else
@@ -143,80 +136,68 @@ int main(int argc, char ** argv) {
 		if (sizeAfter == sizeBefore)
 		{
 			// AlgorithmRegistrar didn't change and so no new algorithm was registered.
-			errorsList.push_back(algorithmFile + ": valid .so but no algorithm was registered after loading it");
+			e.reportError('a', algorithmName + ": valid .so but no algorithm was registered after loading it");
 		}
 		else
 		{
 			// Algorithm was added to AlgorithmRegistrar, adding it's name to the list.
-			regi.setNameForLastAlgorithm(algorithmFile.substr(algorithmFile.find_last_of('/')+1,algorithmFile.find_last_of('.')-2));
+			regi.setNameForLastAlgorithm(algorithmName.erase(algorithmName.find_last_of('.')-2));
 		}
 	}
 
-	if (errorsList.size() > 0)
-	{
-		// "(If there is a problem with algorithm files, we do not continue to check houses.)"
-		char * fullPath = realpath(reader.getAlgorithmPath().c_str(), NULL);
-		string fullPathStr(fullPath);
-		errorsList.push_front("All algorithm files in target folder '" + fullPathStr + "' cannot be opened or are invalid:");
-		free(fullPath);
-	}
-	/*
-	if (AlgorithmFactory.size() == 0)
+	if (regi.size() == 0)
 	{
 		// No algorithms were registered.
-		printErrors(errorsList);
+		cout << "All algorithm files in target folder '" << fullAlgoPath << "' cannot be opened or are invalid:" << endl;
 		return -1;
 	}
-	*/
+
 	// get houses.
 	//	get .house file list.
-	list<string> houseFilesList = reader.getHouseFiles(errorsList);
+	fullPath = realpath(reader.getHousePath().c_str(),NULL);
+	string fullHousePath(fullPath);
+	free(fullPath);
+
+	list<string> houseFilesList = reader.getHouseFiles();
 	if (houseFilesList.size() == 0)
 	{
 		// No houses were found, printing usage and exiting.
-		cout << reader.usageString << endl;
+		e.reportError('u', reader.usageString);
+		e.reportError('u',"cannot find house files in '" + fullHousePath + "'");
 		return -1;
 	}
 	//	create houses from files.
 	list<House> houses;
-	errorsBefore = errorsList.size();
-	for (string HouseFile : houseFilesList)
+	for (string houseFile : houseFilesList)
 	{
+		string houseName = houseFile.substr(houseFile.find_last_of('/')+1);
 		try
 		{
-			houses.emplace_back(HouseFile);	
+			houses.emplace_back(houseFile);	
 		}
 		catch (const exception& problem)
 		{
-			errorsList.push_back(HouseFile + ": " + problem.what());
+			e.reportError('h', houseName + ": " + problem.what());
 		}
 	}
-	errorsAfter = errorsList.size();
 
-	if(errorsAfter - errorsBefore > 0)
-	{
-		// errors occured during houses loading.
-		char * fullPath = realpath(reader.getHousePath().c_str(),NULL);
-		string fullPathStr(fullPath);
-		errorsList.push_front("All house files in target folder '" + fullPathStr + "' cannot be opened or are invalid:");
-		free(fullPath);
-	}
 	if (houses.size() == 0)
 	{
 		// No houses were loaded properly.
-		printErrors(errorsList);
+		cout << "All house files in target folder '" << fullHousePath << "' cannot be opened or are invalid:" << endl;
 		return -1;		
 	}
 
 	// run simulator on houses and algorithms
 	Simulator(settings, houses).run();
 
+	cout << "\nErrors:" << endl;
 	// releasing scoring function point and .so
-	if (dlclose(scoreDL))
+	if ((scoreDL != NULL) && (dlclose(scoreDL)))
 	{
 		return -1;
 	}
-
+	/*
 	for (void * dlHandler : dlList)
 	{
 		if (dlclose(dlHandler))
@@ -224,6 +205,6 @@ int main(int argc, char ** argv) {
 			return -1; // .so failed to close.
 		}
 	}
-
+	*/
 	return 0;
 }

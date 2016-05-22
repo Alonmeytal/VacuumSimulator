@@ -12,7 +12,7 @@ using namespace std;
 #include <cstring>
 
 #include "Reader.h"
-
+#include "Errorton.h"
 
 Reader::Reader(int argc, char ** argv) {
 	paths[strConfig] = "./"; // -config argument default value.
@@ -36,19 +36,21 @@ Reader::Reader(int argc, char ** argv) {
 	}
 }
 
-map<string,int> Reader::getSettings(list<string>& errorsList) {
+map<string,int> Reader::getSettings() {
 	int argumentsRead = 0, badArgumentsRead = 0;
 	map<string,int> settings;
 	const string pathToConfig = paths[strConfig] + "config.ini";
 	
+    Errorton& e = Errorton::getInstance();
+
 	if (access(pathToConfig.c_str(), F_OK) != 0)
 	{
 		// file doesn't exist. usage should be printed and exit.
-		errorsList.push_back(usageString);
 		char * fullPath = realpath(paths[strConfig].c_str(), NULL);
 		string fullPathStr(fullPath);
-		errorsList.push_back("cannot find config.ini file in '" + fullPathStr + "'");
-		free(fullPath);
+        e.reportError('u',usageString);
+		e.reportError('e',"cannot find config.ini file in '" + fullPathStr + "'");
+        free(fullPath);
 		return settings;
 	}
 
@@ -56,8 +58,8 @@ map<string,int> Reader::getSettings(list<string>& errorsList) {
     if (configStream.is_open() == false)
     {
     	// file couldn't be opened for reading.
-    	errorsList.push_back("config.ini exists in '" + paths[strConfig] + "' but cannot be opened");
-    	configStream.close();
+    	e.reportError('u',"config.ini exists in '" + paths[strConfig] + "' but cannot be opened");
+        configStream.close();
     	return settings;
     }
 
@@ -80,13 +82,13 @@ map<string,int> Reader::getSettings(list<string>& errorsList) {
     		if (tempSetting > 0)
     		{
     			settings[settingKey] = tempSetting;
-    			missingArgumentsList.remove(settingKey); // removing found argument from missing's list.
-    		}
-    		else
-    		{
-    			badArgumentsRead++;
-    			badArgumentsList.push_back(settingKey);
-    		}	
+            }
+            else
+            {
+                badArgumentsRead++;
+                badArgumentsList.push_back(settingKey);
+            }   
+    		missingArgumentsList.remove(settingKey); // removing found argument from missing's list.
     	}
     	catch (invalid_argument)
     	{
@@ -106,7 +108,7 @@ map<string,int> Reader::getSettings(list<string>& errorsList) {
     	{
  		   	missingLine += missingSetting + ", ";
     	}
-    	errorsList.push_back(missingLine.erase(missingLine.find_last_of("' ") - 1));
+        e.reportError('u', missingLine.erase(missingLine.find_last_of("' ") - 1));
     }
     // outputing bad valued parameters.
     if (badArgumentsRead > 0)
@@ -117,34 +119,26 @@ map<string,int> Reader::getSettings(list<string>& errorsList) {
     	{
     		badLine +=  badSetting + ", ";
     	}
-    	errorsList.push_back(badLine.erase(badLine.find_last_of("' ") - 1));
+        e.reportError('u', badLine.erase(badLine.find_last_of("' ") - 1));
     }
     configStream.close();
     return settings;
 }
 
-list<string> Reader::getHouseFiles(list<string>& errorsList) {
-	list<string> housesFromPath = getFilesFromPath(paths[strHouse], ".house", errorsList);
-	if ((paths[strHouse] != "./") && (housesFromPath.size() == 0))
-	{
-		// in-case path is empty (no houses), it is instructed to look for houses in the working directory.
-		housesFromPath = getFilesFromPath("./", ".house", errorsList);
-	}
+list<string> Reader::getHouseFiles() {
+	list<string> housesFromPath = getFilesFromPath(paths[strHouse], ".house");
 	return housesFromPath;
 }
 
-list<string> Reader::getAlgorithmFiles(list<string>& errorsList) {
-	list<string> algorithmsFromPath = getFilesFromPath(paths[strAlgorithms], ".so", errorsList);
-	if ((paths[strAlgorithms] != "./") && (algorithmsFromPath.size() == 0))
-	{
-		// in-case path is empty (no algorithms), it is instructed to look for algorithms in the working directory.
-		algorithmsFromPath = getFilesFromPath("./", ".so", errorsList);
-	}
+list<string> Reader::getAlgorithmFiles() {
+	list<string> algorithmsFromPath = getFilesFromPath(paths[strAlgorithms], ".so");
 	return algorithmsFromPath;
 }
 
-list<string> Reader::getFilesFromPath(string path, string fileExtension, list<string>& errorsList) {
+list<string> Reader::getFilesFromPath(string path, string fileExtension) {
 	list<string> filePaths;
+
+    Errorton& e = Errorton::getInstance();
 
 	DIR * pathDirectory;
 	struct dirent * fileEntity;
@@ -153,7 +147,7 @@ list<string> Reader::getFilesFromPath(string path, string fileExtension, list<st
 	if ((pathDirectory = opendir(path.c_str())) == NULL)
 	{
 		// Directory couldn't be opened, returning usage.
-		errorsList.push_back(usageString);
+        e.reportError('u', usageString);
 		return filePaths;
 	}
 

@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := all
-OBJS = main.o House.o Point.o Sensor.o Reader.o Simulation.o Simulator.o AlgorithmRegistrar.o AlgorithmRegistration.o
+OBJS = main.o House.o Point.o Sensor.o Reader.o Simulation.o Simulator.o AlgorithmRegistrar.o AlgorithmRegistration.o Errorton.o
 CC = g++
 DEBUG = -g
 CFLAGS = -Wall -c -O2 -std=c++14 -pedantic -pthread $(DEBUG)
@@ -19,7 +19,7 @@ House.o : House.h House.cpp Point.h
 Sensor.o : Sensor.h Sensor.cpp AbstractSensor.h House.h Point.h
 	$(CC) $(CFLAGS) Sensor.cpp
 
-Reader.o : Reader.h Reader.cpp House.h AbstractAlgorithm.h
+Reader.o : Reader.h Reader.cpp House.h AbstractAlgorithm.h Errorton.h
 	$(CC) $(CFLAGS) Reader.cpp
 
 Simulation.o : Simulation.h Simulation.cpp Direction.h AbstractSensor.h AbstractAlgorithm.h Point.h House.h
@@ -34,7 +34,10 @@ AlgorithmRegistrar.o : AlgorithmRegistrar.cpp AlgorithmRegistrar.h AlgorithmRegi
 AlgorithmRegistration.o : AlgorithmRegistration.cpp AlgorithmRegistrar.h AbstractAlgorithm.h
 	$(CC) $(CFLAGS) AlgorithmRegistration.cpp
 
-main.o : Simulator.h Simulation.h AbstractAlgorithm.h House.h Reader.h AlgorithmRegistrar.h
+Errorton.o : Errorton.cpp
+	$(CC) $(CFLAGS) Errorton.cpp
+
+main.o : Simulator.h Simulation.h AbstractAlgorithm.h House.h Reader.h AlgorithmRegistrar.h Errorton.h
 	$(CC) $(CFLAGS) main.cpp -ldl
 
 _305008864_A.o: _305008864_A.cpp _305008864_A.h AbstractAlgorithm.h Direction.h AbstractSensor.h SensorInformation.h AlgorithmRegistration.h
