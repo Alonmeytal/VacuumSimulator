@@ -79,7 +79,6 @@ void Simulator::run() {
 		winnerFound = false; // flag for if finding a winner.
 		actualPlaceInCompetition = 1; // counter for place in competition.
 		// iterate while stepsTaken <= MaxSteps (setting) OR MaxStepsAfterWinner reached  AND not all robots made a mistake.
-
 		while (((stepsFromWinner <= settings["MaxStepsAfterWinner"]) && (stepsTaken <= currentHouse.maxSteps)) && (failedRobots < numOfAlgorithms))
 		{
 			finishedThisRound = false;

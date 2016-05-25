@@ -68,27 +68,30 @@ House::House(string fileName) : House() {
 
 	//houseFileStream.ignore();
 	// reading House.matrix from file.
-	matrix = new char*[rows]; // assigning rows of char[], according to House.rows
+	//matrix = new char*[rows]; // assigning rows of char[], according to House.rows
 	
 	int i, j;
 	for (i = 0; i < rows; i++)
 	{
 		getline(houseFileStream, row); // reading current line from houseFileStream into $row
-		matrix[i] = new char[cols]; // assigning row to memory, according to House.cols
+		//matrix[i] = new char[cols]; // assigning row to memory, according to House.cols
 		if (houseFileStream.eof())
 		{
 			// house file was too short (didn't have enough rows).
-			for (j = 0; j < cols; j++)
-			{
-				matrix[i][j] = 'W'; // filling remaining rows with walls.
-			}
+			//for (j = 0; j < cols; j++)
+			//{
+			//	matrix[i][j] = 'W'; // filling remaining rows with walls.
+			//}
+			matrix.push_back(string(cols, 'W'));
 		}
 		else
 		{
 			// still within file house rows.
+			row.resize(cols, 'W');
+			matrix.push_back(row);
 			for (j = 0; (j < cols) || (j < ((int) row.length())); j++)
 			{
-				matrix[i][j] = row[j]; // copying value into house matrix.
+				//matrix[i][j] = row[j]; // copying value into house matrix.
 				if ((row[j] >= '1') && (row[j] <= '9'))
 				{
 					dirt += (row[j] - '0'); // cell contained dirt, accumulating it into House.dirt.
@@ -99,6 +102,7 @@ House::House(string fileName) : House() {
 				}
 
 			}
+			/*
 			if (((int) row.length()) < cols)
 			{
 				// row was shorter then needed, completing with walls.
@@ -107,7 +111,7 @@ House::House(string fileName) : House() {
 					matrix[i][j] = 'W';
 				}
 			}
-
+			*/
 		}
 	}
 
@@ -161,6 +165,7 @@ House::House(const House & otherHouse) : House() {
 	dirt = otherHouse.dirt;
 
 	// assigning and copying matrix. char-by-char \O.O/
+	/*
 	matrix = new char*[rows];
 	for (int i = 0; i < rows; i++)
 	{
@@ -170,6 +175,8 @@ House::House(const House & otherHouse) : House() {
 			matrix[i][j] = otherHouse.matrix[i][j];
 		}
 	}
+	*/
+	matrix = otherHouse.matrix;
 	dockingPoint = Point(otherHouse.dockingPoint);
 }
 
@@ -191,44 +198,3 @@ void House::vacuum(int x, int y){
 	if (matrix[y][x] > '0' && matrix[y][x] <= '9')
 		matrix[y][x]--;
 }
-
-bool House::isValid() {
-	// rewriting boundaries into walls.
-	int i, j;
-	for (i = 0; i < cols; i++)
-	{
-		matrix[0][i] = 'W';
-		matrix[rows-1][i] = 'W';
-	}
-	for (i = 0; i < rows; i++)
-	{
-		matrix[i][0] = 'W';
-		matrix[i][cols-1] = 'W';
-	}
-
-	// searching for one and only one docking point
-	// going over the inside only (since boundaries have been fixed)
-	int dockCount = 0;
-	for (i = 1; i < rows - 1; i++)
-	{
-		for (j = 1; j < cols - 1; j++)
-		{
-			if (matrix[i][j] == 'D')
-			{
-				dockCount++;
-			}
-			else if ((matrix[i][j] <= '0' || matrix[i][j] > '9') && (matrix[i][j] != 'W'))
-			{
-				// cell isn't a docking point(D), a dirt level (0-9) or a wall (W)
-				matrix[i][j] = ' ';
-			}
-		}
-	}
-	if (dockCount > 1)
-		return false;
-	return true;
-}
-House::~House() {
-	delete matrix;
-}
-
