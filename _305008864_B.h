@@ -1,13 +1,15 @@
 #ifndef _305008864_B_H
 #define _305008864_B_H
-using namespace std;
-#include "Direction.h"
-#include "AbstractAlgorithm.h"
 #include <array>
 #include <stack>
 #include <climits>
 #include <memory>
-#include "AlgorithmFactory.h"
+
+#include "Direction.h"
+#include "AbstractAlgorithm.h"
+#include "AlgorithmRegistration.h"
+
+using namespace std;
 
 class _305008864_B: public AbstractAlgorithm
 {
@@ -17,7 +19,7 @@ public:
 	virtual void setSensor(const AbstractSensor& sensor) { algoSensor = &sensor; };
 	virtual void setConfiguration(map<string, int> config) { algoConfig = config; };
 	//using the sensor's information returns the next move the simulated robot should do
-	virtual Direction step();
+	virtual Direction step(Direction prevStep);
 	//alerts the algorithm that it must start finish the cleaning
 	virtual void aboutToFinish(int stepsTillFinishing) { aboutToFinishClean = true; stepsTofinish = stepsTillFinishing; };
 	virtual ~_305008864_B();

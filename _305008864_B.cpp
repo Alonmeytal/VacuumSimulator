@@ -11,7 +11,7 @@ _305008864_B::_305008864_B(){
 }
 
 
-Direction _305008864_B::step() {
+Direction _305008864_B::step(Direction prevStep) {
 	Direction nextDir;
 	if(aboutToFinishClean ==false || (stepsTofinish > (int)stepsHistory.size()+1)){
 		SensorInformation currPosStatus = algoSensor->sense();
@@ -79,16 +79,4 @@ Direction _305008864_B::getOppositeDir(const Direction& currDir)const {
 
 _305008864_B::~_305008864_B() { }
 
-extern "C"{
-	AbstractAlgorithm *maker(){
-		return new _305008864_B;
-	}
-	class proxy {
-	public:
-		proxy(){
-			//register the maker with the factory
-			AlgorithmFactory["_305008864_B"] = maker;
-		}
-	};
-	proxy p;
-}
+REGISTER_ALGORITHM (_305008864_B)
