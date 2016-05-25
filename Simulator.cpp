@@ -11,21 +11,28 @@
 #include <string>
 #include <list>
 #include <array>
+#include <map>
 #include <algorithm>
 #include <cstring>
 
 using namespace std;
 
 #include "Simulator.h"
+#include "Errorton.h"
+#include "AlgorithmRegistrar.h"
 
 void Simulator::run() {
+	// getting global singletons
+	Errorton& e = Errorton::getInstance();
+	AlgorithmRegistrar& regi = AlgorithmRegistrar::getInstance();
+
 	int i, j;
 
-	list<unique_ptr<AbstractAlgorithm>> algorithms = AlgorithmRegistrar::getInstance().getAlgorithms();
+	list<unique_ptr<AbstractAlgorithm>> algorithms;
 	
 	// count houses and algorithms for future reference.
 	int numOfHouses = houses.size();
-	int numOfAlgorithms = algorithms.size();
+	int numOfAlgorithms = regi.size();
 
 	// ! run a simulation of the algorithm on the house
 	list<Simulation> simulationsList;
@@ -33,7 +40,7 @@ void Simulator::run() {
 	// setting up simulation steps counting table : (house, algorithm) for scoring purposes.
 	map <int, map <int, int>> simulationSteps;
 	// also, setting up simulation scoring table.
-	map <int, map <int, int>> simulationScores; 
+	//map <int, map <int, int>> simulationScores; 
 
 	// initializing counting table values.
 	for (i = 0; i < numOfHouses; i++)
@@ -48,9 +55,14 @@ void Simulator::run() {
 	int stepsTaken, winnerSteps, stepsFromWinner, failedRobots, actualPlaceInCompetition, winnersThisRound;
 	bool winnerFound, finishedThisRound;
 	i = 0;
+	const list<string>& algorithmNames = regi.getAlgorithmNames();
+	auto algorithmName = algorithmNames.begin();
+	map<string, map<string, int>> simulationScores;
 	for (House& currentHouse : houses)
 	{
+		simulationScores[currentHouse.name]["AVG"] = 0;
 		// for each algorithm;
+		algorithms = regi.getAlgorithms();
 		for (auto& currentAlgorithm : algorithms)
 		{
 			// create a simulation instance that will run currentAlgorithm on currentHouse;
@@ -67,6 +79,7 @@ void Simulator::run() {
 		winnerFound = false; // flag for if finding a winner.
 		actualPlaceInCompetition = 1; // counter for place in competition.
 		// iterate while stepsTaken <= MaxSteps (setting) OR MaxStepsAfterWinner reached  AND not all robots made a mistake.
+
 		while (((stepsFromWinner <= settings["MaxStepsAfterWinner"]) && (stepsTaken <= currentHouse.maxSteps)) && (failedRobots < numOfAlgorithms))
 		{
 			finishedThisRound = false;
@@ -74,6 +87,7 @@ void Simulator::run() {
 			int stepResult;
 			j = 0; // algorithm number.
 			// making each algorithm make a single step.
+			algorithmName = algorithmNames.begin();
 			for (Simulation& sim : simulationsList)
 			{
 				// make sure currentAlgrotim didn't make a mistake and thus should make another step.
@@ -85,7 +99,7 @@ void Simulator::run() {
 					case -1 :
 						// algorithm made a mistake.
 						simulationSteps[i][j] = -1;
-						cout << "algorithm " << j << " has made a mistake." << endl;
+						e.reportError('a', "Algorithm " + *algorithmName + " when running on " + currentHouse.name + " went on a wall in step " + to_string(stepsTaken));
 						failedRobots++;
 						positionInCompetition[j] = 10;
 						break;
@@ -108,6 +122,7 @@ void Simulator::run() {
 					}
 				}
 				j++;
+				algorithmName++;
 			}
 			if (finishedThisRound)
 			{
@@ -143,11 +158,19 @@ void Simulator::run() {
 
 		// scoring the robots for currentHouse.
 		j = 0;
+		algorithmName = algorithmNames.begin();
+		map<string,int> score_params;
 		for (Simulation& sim : simulationsList)
 		{
-			simulationScores[i][j] = score(positionInCompetition[j] == 10 ? 10 : std::min(4,positionInCompetition[j]), winnerSteps,
-					simulationSteps[i][j], currentHouse.dirt, sim.dirtCollected,  sim.hasFinished);
+			score_params["actual_position_in_competition"] = ((positionInCompetition[j] == 10) ? 10 : std::min(4,positionInCompetition[j]));
+			score_params["winner_num_steps"] = winnerSteps;
+			score_params["this_num_steps"] = simulationSteps[i][j];
+			score_params["sum_dirt_in_house"] = currentHouse.dirt;
+			score_params["dirt_collected"] = sim.dirtCollected;
+			score_params["is_back_in_docking"] = sim.hasFinished;
+			simulationScores[currentHouse.name][*algorithmName] = score(score_params);
 			j++;
+			algorithmName++;
 		}
 
 		// emptying simulationsList for next house (next round of simulations).
@@ -157,7 +180,7 @@ void Simulator::run() {
 
 	// print scoring function.
 	// titles row
-	const int rowLengthInChars = 14 + ((numOfHouses + 1) * 12);
+	const int rowLengthInChars = 14 + ((numOfHouses + 1) * 11) + 2;
 	cout << setfill('-') << setw(rowLengthInChars) << " " << setfill(' ') << endl; // dash-spacing line.
 	cout << "|" << setw(13) << " " << "|"; // algorithms name empty column title.
 	for (House& h : houses)
@@ -172,14 +195,14 @@ void Simulator::run() {
 	cout << setfill('-') << setw(rowLengthInChars-1) << "-" << setfill(' ') << endl; // dash-spacing line.
 
 	// algorithms' results;
-	int avgForAlgorithm;
+	// int avgForAlgorithm;
 	// getting algorithm's names' iterator
-	const list<string>& algorithmNames = AlgorithmRegistrar::getInstance().getAlgorithmNames();
-	auto algorithmName = algorithmNames.begin();
+	//const list<string>& algorithmNames = regi.getAlgorithmNames();
+	algorithmName = algorithmNames.begin();
 
 	for (i = 0; i < numOfAlgorithms; i++)
 	{
-		avgForAlgorithm = 0;
+		//avgForAlgorithm = 0;
 		// for each algorithm.
 		j = 0;
 		cout << "|" << setw(13) << left << *algorithmName << "|";
@@ -187,11 +210,11 @@ void Simulator::run() {
 		{
 			// for each house.
 
-			cout << setw(10) << right << simulationScores[j][i]; // required for Targil 1 only.
-			avgForAlgorithm += simulationScores[j][i];
+			cout << setw(10) << right << simulationScores[h.name][*algorithmName] << "|"; // required for Targil 1 only.
+			//avgForAlgorithm += simulationScores[j][i];
 			j++;
 		}
-		cout << "|" << setw(10) << setprecision(3) << right << avgForAlgorithm/numOfHouses << "|" << endl;
+		cout << setw(10) << setprecision(3) << right << 200 << "|" << endl;
 		cout << setfill('-') << setw(rowLengthInChars) << " " << setfill(' ') << endl; // dash-spacing line
 		algorithmName++;
 	}

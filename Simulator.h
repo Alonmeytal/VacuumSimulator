@@ -29,13 +29,9 @@ class Simulator {
 	map<string,int> settings;
 	list<House> houses;
 	list<unique_ptr<AbstractAlgorithm>> algorithms;
+	int (*score)(const map<string,int>&);
 
-	int score(int positionInCompetition, int winnerNumSteps, int thisNumSteps, int sumDirtInHouse, int dirtCollected, bool isBackInDocking)
-	{
-		return std::max(0, 2000 - ((positionInCompetition - 1) * 50) + ((winnerNumSteps - thisNumSteps) * 10)
-			- ((sumDirtInHouse - dirtCollected) * 3) + (isBackInDocking ? 50 : -200));
-	}
 public:
- 	Simulator(map<string, int>& _settings, list<House>& _houses) : settings(_settings), houses(_houses) {};
+ 	Simulator(map<string, int>& _settings, list<House>& _houses, int (*_score)(const map<string,int>&)) : settings(_settings), houses(_houses), score(_score) {};
 	void run();
 };

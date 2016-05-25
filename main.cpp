@@ -33,7 +33,10 @@ using namespace std;
 
 int defaultScore(const map<string,int>& score_params)
 {
-	return -1;
+	return std::max(0, 2000 - ((score_params.at("actual_position_in_competition") - 1) * 50) + 
+	(score_params.at("winner_num_steps") - score_params.at("this_num_steps") * 10)
+	- (score_params.at("sum_dirt_in_house") - score_params.at("dirt_collected") * 3) + 
+		((score_params.at("is_back_in_docking")) ? 50 : -200));
 }
 
 int main(int argc, char ** argv) {
@@ -91,6 +94,10 @@ int main(int argc, char ** argv) {
 				dlclose(scoreDL);
 				return -1;
 			}
+			else
+			{
+				cout << "score_formula loaded!" << endl;
+			}
 		}
 	}
 	
@@ -141,7 +148,7 @@ int main(int argc, char ** argv) {
 		else
 		{
 			// Algorithm was added to AlgorithmRegistrar, adding it's name to the list.
-			regi.setNameForLastAlgorithm(algorithmName.erase(algorithmName.find_last_of('.')-2));
+			regi.setNameForLastAlgorithm(algorithmName.erase(algorithmName.find_last_of('.')));
 		}
 	}
 
@@ -189,14 +196,16 @@ int main(int argc, char ** argv) {
 	}
 
 	// run simulator on houses and algorithms
-	Simulator(settings, houses).run();
+	Simulator(settings, houses, score).run();
 
 	cout << "\nErrors:" << endl;
+
 	// releasing scoring function point and .so
 	if ((scoreDL != NULL) && (dlclose(scoreDL)))
 	{
 		return -1;
 	}
+
 	/*
 	for (void * dlHandler : dlList)
 	{

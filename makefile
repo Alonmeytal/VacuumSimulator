@@ -25,7 +25,7 @@ Reader.o : Reader.h Reader.cpp House.h AbstractAlgorithm.h Errorton.h
 Simulation.o : Simulation.h Simulation.cpp Direction.h AbstractSensor.h AbstractAlgorithm.h Point.h House.h
 	$(CC) $(CFLAGS) Simulation.cpp
 
-Simulator.o : Simulator.cpp Simulator.cpp AbstractSensor.h AbstractAlgorithm.h House.h Simulation.h
+Simulator.o : Simulator.cpp Simulator.cpp AbstractSensor.h AbstractAlgorithm.h House.h Simulation.h  Errorton.h AlgorithmRegistrar.h
 	$(CC) $(CFLAGS) Simulator.cpp
 
 AlgorithmRegistrar.o : AlgorithmRegistrar.cpp AlgorithmRegistrar.h AlgorithmRegistration.h AbstractAlgorithm.h
@@ -46,13 +46,13 @@ _305008864_A.o: _305008864_A.cpp _305008864_A.h AbstractAlgorithm.h Direction.h 
 _305008864_A_.so: _305008864_A.o
 	g++ -shared -Wl,-soname,_305008864_A_.so -o _305008864_A_.so _305008864_A.o
 
-_305008864_B.o: _305008864_B.cpp _305008864_B.h AbstractAlgorithm.h Direction.h AbstractSensor.h SensorInformation.h AlgorithmFactory.h
+_305008864_B.o: _305008864_B.cpp _305008864_B.h AbstractAlgorithm.h Direction.h AbstractSensor.h SensorInformation.h AlgorithmRegistration.h
 	$(CC) $(CFLAGS) -Warray-bounds _305008864_B.cpp -mcmodel=large
 
 _305008864_B_.so: _305008864_B.o
 	g++ -shared -Wl,-soname,_305008864_B_.so -o _305008864_B_.so _305008864_B.o
 
-_305008864_C.o: _305008864_C.cpp _305008864_C.h AbstractAlgorithm.h Direction.h AbstractSensor.h SensorInformation.h AlgorithmFactory.h
+_305008864_C.o: _305008864_C.cpp _305008864_C.h AbstractAlgorithm.h Direction.h AbstractSensor.h SensorInformation.h AlgorithmRegistration.h
 	$(CC) $(CFLAGS) -Warray-bounds _305008864_C.cpp -mcmodel=large
 
 _305008864_C_.so: _305008864_C.o

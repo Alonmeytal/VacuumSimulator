@@ -1,5 +1,5 @@
 #include "_305008864_A.h"
-#include <iostream>
+
 using namespace std;
 
 _305008864_A::_305008864_A(){
@@ -13,7 +13,7 @@ _305008864_A::_305008864_A(){
 }
 
 
-Direction _305008864_A::step() {
+Direction _305008864_A::step(Direction prevStep) {
 	Direction nextDir;
 	if(aboutToFinishClean ==false || (stepsTofinish > (int)stepsHistory.size()+1)){
 		SensorInformation currPosStatus = algoSensor->sense();
@@ -80,25 +80,5 @@ Direction _305008864_A::getOppositeDir(const Direction& currDir)const {
 } 
 
 _305008864_A::~_305008864_A() { }
-/*
-extern "C"{	
-	AbstractAlgorithm *maker(){
-		cout << "into maker" << endl;
-		return new _305008864_A;
-	}
-	class proxy {
-	public:
-		proxy(){			
-			cout << "in proxy ctor, factory_address : " << &AlgorithmFactory << endl;
-			//register the maker with the factory
-			cout << AlgorithmFactory.count("_305008864_A") << endl;
-			AlgorithmFactory["_305008864_A"] = maker;
-			cout << "after insertion" << endl;
-			cout << AlgorithmFactory.count("_305008864_A") << endl;
-		}
-	};
-	proxy p;
-}
-*/
 
 REGISTER_ALGORITHM (_305008864_A)

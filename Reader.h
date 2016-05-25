@@ -5,6 +5,8 @@
  * username2:chenanily
  * ID2:305008864
  */
+#ifndef READER_H_
+#define READER_H_
 
 #include <iostream>
 #include <fstream>
@@ -53,3 +55,5 @@ public:
 	string getScorePath() { return paths[strScore]; }
 	int getNumberOfThreads();
 };
+
+#endif /* READER_H_ */

@@ -66,7 +66,7 @@ House::House(string fileName) : House() {
 		throw runtime_error("line number 4 in house file shall be a positive number, found: " + row);
 	}
 
-	houseFileStream.ignore();
+	//houseFileStream.ignore();
 	// reading House.matrix from file.
 	matrix = new char*[rows]; // assigning rows of char[], according to House.rows
 	
@@ -150,16 +150,7 @@ House::House(string fileName) : House() {
 	{
 		throw runtime_error("too many docking stations (more than one D in house)");
 	}
-	/*
-	//printing house for testing.
-	cout << "\n" << name << endl;
-	for (i = 0; i < rows; i++)
-	{
-		for (j = 0; j < cols; j++)
-			cout << matrix[i][j];
-		cout << endl;
-	}
-	*/
+	
 	houseFileStream.close(); // releasing .house file resource.
 }
 House::House(const House & otherHouse) : House() {
@@ -167,6 +158,7 @@ House::House(const House & otherHouse) : House() {
 	maxSteps = otherHouse.maxSteps;
 	cols = otherHouse.cols;
 	rows = otherHouse.rows;
+	dirt = otherHouse.dirt;
 
 	// assigning and copying matrix. char-by-char \O.O/
 	matrix = new char*[rows];

@@ -23,7 +23,7 @@ int Simulation::runStep(){
 	}
 	SensorInformation currentSensorInfo;
 	currentSensorInfo = sensor->sense();
-	Direction wantedDir = algorithm->step();
+	Direction wantedDir = algorithm->step(prevStep);
 
 	if (currentSensorInfo.isWall[(int)wantedDir]) {
 		return -1;
@@ -52,6 +52,7 @@ int Simulation::runStep(){
 		case Direction::Stay: //we're doing nothing but just a reminder that is an option
 			break;
 	}
+	prevStep = wantedDir;
 	if (house.matrix[currentLocation.getY()][currentLocation.getX()] == 'D' && dirtCollected==house.dirt){
 		this->hasFinished = true;
 		return 1;

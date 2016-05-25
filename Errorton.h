@@ -1,3 +1,5 @@
+#ifndef ERRORTON_H_
+#define ERRORTON_H_
 #include <list>
 
 using namespace std;
@@ -19,3 +21,5 @@ public :
 private :
 	static Errorton instance;
 };
+
+#endif /* ERRORTON_H_ */

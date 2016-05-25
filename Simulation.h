@@ -29,6 +29,8 @@ class Simulation
 
 	Point currentLocation; // robot's current location.
 	unique_ptr<AbstractSensor> sensor;
+	Direction prevStep;
+
 public:
 	int steps; // steps taken so far.
 	int batteryMode; // how much charge is left in the robot.
@@ -38,11 +40,10 @@ public:
 	Simulation(unique_ptr<AbstractAlgorithm> algo, House home, map<string,int>& s) :
 		 algorithm(std::move(algo)), house(home), settings(s), currentLocation(home.dockingPoint),steps(0), dirtCollected(0), hasFinished(false)
 	{
-		// TO-DO : fill other class memebers.
-		//algorithm = make_unique(algo);
-		batteryMode = s.find("BatteryCapacity")->second;
-		sensor = make_unique<Sensor>(&house, &currentLocation);
-		algorithm->setSensor(*sensor);
+		batteryMode = s.find("BatteryCapacity")->second; // setting up battery capacity.
+		sensor = make_unique<Sensor>(&house, &currentLocation); // initializing sensor.
+		algorithm->setSensor(*sensor); // passing sensor to algorithm
+		prevStep = Direction::Stay; // setting up prevStep to stay as instucted.
 	}
 
 	int runStep(); // runs the algorithm for a single step, updating currentLocation, batteryMode, and house dirt-levels.

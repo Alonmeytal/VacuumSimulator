@@ -19,7 +19,6 @@ public:
 	int rows, cols; // house size (rows and columns).
 	int dirt; // sum of dirt in the house (to begin with).
 	string name;
-	string description;
 	int maxSteps;
 	char ** matrix; // house matrix[rows][cols].
 	Point dockingPoint; // Point representing the co-ordinates of 'D' in the house.

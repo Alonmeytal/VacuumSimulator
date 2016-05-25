@@ -11,7 +11,6 @@ using namespace std;
 
 #include "Direction.h"
 #include "AbstractAlgorithm.h"
-#include "AlgorithmFactory.h"
 #include "AlgorithmRegistration.h"
 
 class _305008864_A: public AbstractAlgorithm
@@ -22,7 +21,7 @@ public:
 	virtual void setSensor(const AbstractSensor& sensor) { algoSensor = &sensor; };
 	virtual void setConfiguration(map<string, int> config) { algoConfig = config; };
 	//using the sensor's information returns the next move the simulated robot should do
-	virtual Direction step();
+	virtual Direction step(Direction prevStep);
 	//alerts the algorithm that it must start finish the cleaning
 	virtual void aboutToFinish(int stepsTillFinishing) { aboutToFinishClean = true; stepsTofinish = stepsTillFinishing; };
 	virtual ~_305008864_A();
