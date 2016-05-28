@@ -6,7 +6,7 @@ CFLAGS = -Wall -c -O2 -std=c++14 -pedantic -pthread $(DEBUG)
 LFLAGS = -Wall $(DEBUG)
 
 simulator : $(OBJS)
-	$(CC) -rdynamic $(LFLAGS) $(OBJS) -o simulator -ldl
+	$(CC) -rdynamic -pthread $(LFLAGS) $(OBJS) -o simulator -ldl
 
 all: simulator _305008864_A_.so _305008864_B_.so _305008864_C_.so
 	

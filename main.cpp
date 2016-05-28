@@ -33,10 +33,21 @@ using namespace std;
 
 int defaultScore(const map<string,int>& score_params)
 {
-	return std::max(0, 2000 - ((score_params.at("actual_position_in_competition") - 1) * 50) + 
-	(score_params.at("winner_num_steps") - score_params.at("this_num_steps") * 10)
-	- (score_params.at("sum_dirt_in_house") - score_params.at("dirt_collected") * 3) + 
-		((score_params.at("is_back_in_docking")) ? 50 : -200));
+	try
+	{
+		int scoring_params = 2000 - ((score_params.at("actual_position_in_competition") - 1 ) * 50) +
+			((score_params.at("winner_num_steps") - score_params.at("this_num_steps")) * 10) -
+			((score_params.at("sum_dirt_in_house") - score_params.at("dirt_collected")) * 3) +
+			((score_params.at("is_back_in_docking") == 1 ? 50 : -200));
+
+		int score = max(0, scoring_params);
+		return score;
+	}
+	catch(out_of_range)
+	{
+		// couldn't find one of the keys.
+		return -1;
+	}
 }
 
 int main(int argc, char ** argv) {
@@ -187,7 +198,7 @@ int main(int argc, char ** argv) {
 			e.reportError('h', houseName + ": " + problem.what());
 		}
 	}
-
+	houses.sort([](House a, House b) { return a.name < b.name; });
 	if (houses.size() == 0)
 	{
 		// No houses were loaded properly.
@@ -196,7 +207,7 @@ int main(int argc, char ** argv) {
 	}
 
 	// run simulator on houses and algorithms
-	Simulator(settings, houses, score).run();
+	Simulator(settings, houses, score, reader.getNumberOfThreads()).run();
 
 	cout << "\nErrors:" << endl;
 

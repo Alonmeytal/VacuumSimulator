@@ -6,14 +6,14 @@
  * ID2:305008864
  */
 
-#include <iostream>
-#include <iomanip>
 #include <string>
 #include <list>
-#include <array>
-#include <algorithm>
-#include <cstring>
+#include <vector>
+
 #include <memory>
+#include <thread>
+#include <atomic>
+#include <mutex>
 
 using namespace std;
 
@@ -27,11 +27,24 @@ using namespace std;
 
 class Simulator {
 	map<string,int> settings;
-	list<House> houses;
+	//list<House> houses;
+	vector<House> houses;
 	list<unique_ptr<AbstractAlgorithm>> algorithms;
 	int (*score)(const map<string,int>&);
 
+	map<string, map<string, int>> simulationScores;
+
+	// Multi-Threading stuff.
+	int numOfThreads;
+	atomic_size_t nextHouse{0};
+	mutex getHouse_Lock;
+
+ 	void simulatorThread();
+
 public:
- 	Simulator(map<string, int>& _settings, list<House>& _houses, int (*_score)(const map<string,int>&)) : settings(_settings), houses(_houses), score(_score) {};
+ 	Simulator(map<string, int>& _settings, list<House>& _houses, int (*_score)(const map<string,int>&), int _threads) :
+ 	settings(_settings), houses(vector<House> {std::begin(_houses),std::end(_houses)}),
+ 	score(_score), numOfThreads(_threads) {};
+
 	void run();
 };

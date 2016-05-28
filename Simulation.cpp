@@ -31,10 +31,10 @@ int Simulation::runStep(){
 	//there is enough battery and next step is not a wall, so we are moving
 	if (currentSensorInfo.dirtLevel > 0){
 		house.vacuum(currentLocation.getX(), currentLocation.getY());
+		dirtCollected++;
 	}
 	steps++;
 	batteryMode -= settings.find("BatteryConsumptionRate")->second;
-	dirtCollected++;
 	switch (wantedDir)
 	{
 		case Direction::North:

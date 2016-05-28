@@ -19,7 +19,7 @@ Reader::Reader(int argc, char ** argv) {
 	paths[strHouse] = "./"; // -house_path argument default value.
 	paths[strAlgorithms] = "./"; // - algorithm_path default value
     paths[strScore] = "-1";
-
+    paths[strThreads] = "1";
 	if ((argc > 1) && (argc % 2))
 	{
 		// command-line arguments (one or more) were inserted, updating relevant values.
@@ -166,6 +166,18 @@ list<string> Reader::getFilesFromPath(string path, string fileExtension) {
 
 int Reader::getNumberOfThreads()
 {
+    try
+    {
+        int tempThreads = stoi(paths[strThreads]);
+        if (tempThreads > 0)
+            return tempThreads;
+        else
+            return 1;
+    }
+    catch (invalid_argument)
+    {
+        return 1;
+    }
     return 1;
 }
 
