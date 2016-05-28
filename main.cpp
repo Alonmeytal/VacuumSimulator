@@ -88,7 +88,7 @@ int main(int argc, char ** argv) {
 			return -1;
 		}
 		// score_formula.so exists, trying to open it.
-		scoreDL = dlopen(scoringFilePath.c_str(), RTLD_NOW);
+		scoreDL = dlopen(scoringFilePath.c_str(), RTLD_LAZY);
 		if (scoreDL == NULL)
 		{
 			// score_formula.so could not be loaded, printing error
@@ -101,13 +101,14 @@ int main(int argc, char ** argv) {
 			if (score == NULL)
 			{
 				// symbol couldn't be found.
-				e.reportError('u',"score_formula.so exists in '" + fullPathStr + "' but cannot be opened or is not a valid .so");
+				e.reportError('u',"score_formula.so is a valid .so but it does not have a valid score formula");
+				cout << dlerror() << endl;
 				dlclose(scoreDL);
 				return -1;
 			}
 			else
 			{
-				cout << "score_formula loaded!" << endl;
+				//cout << "score_formula loaded!" << endl;
 			}
 		}
 	}

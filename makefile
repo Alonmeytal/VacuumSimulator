@@ -8,7 +8,7 @@ LFLAGS = -Wall $(DEBUG)
 simulator : $(OBJS)
 	$(CC) -rdynamic -pthread $(LFLAGS) $(OBJS) -o simulator -ldl
 
-all: simulator _305008864_A_.so _305008864_B_.so _305008864_C_.so
+all: simulator _305008864_A_.so _305008864_B_.so _305008864_C_.so score_formula.so
 	
 Point.o : Point.h Point.cpp
 	$(CC) $(CFLAGS) Point.cpp
@@ -58,7 +58,8 @@ _305008864_C.o: _305008864_C.cpp _305008864_C.h AbstractAlgorithm.h Direction.h 
 _305008864_C_.so: _305008864_C.o
 	g++ -shared -Wl,-soname,_305008864_C_.so -o _305008864_C_.so _305008864_C.o
 
-
+score_formula.so : score_formula.cpp
+	g++ -fPIC -shared -o score_formula.so score_formula.cpp
 
 clean:
 	\rm *.o simulator
