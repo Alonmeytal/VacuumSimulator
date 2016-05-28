@@ -23,7 +23,14 @@ House::House(string fileName) : House() {
 	}
 
 	// Reading house name
-	name = fileName.substr(fileName.find_last_of('/')+1,fileName.find_first_of('.')-fileName.find_last_of('/')-1);
+	if(fileName.find_last_of('/') == 1)
+	{
+		name = fileName.substr(fileName.find_last_of('/')+1,fileName.find_last_of('.')-2);	
+	}
+	else
+	{
+		name = fileName.substr(fileName.find_last_of('/')+1,fileName.find_last_of('.')-fileName.find_last_of('/')-1);
+	}
 	getline(houseFileStream,row); // skipping name-description line.
 
 	int tempNumber;
