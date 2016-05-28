@@ -137,16 +137,6 @@ void Simulator::simulatorThread() {
 		}
 
 		// finished iterating over currentHouse.
-		// looking for unfinished algorithms, setting their steps to simulationSteps.
-		for (auto algoName : regi.getAlgorithmNames())
-		{
-			if (simulationSteps[algoName] <= 0)
-			{
-				// robot did not finish
-				simulationSteps[algoName] = stepsTaken;
-				positionInCompetition[algoName] = 10;
-			}
-		}
 		// if winner was not found, winnerSteps should be simulationSteps (stepsTaken).
 		if (!winnerFound)
 		{
@@ -158,6 +148,16 @@ void Simulator::simulatorThread() {
 		map<string,int> score_params;
 		for (Simulation& sim : simulationsList)
 		{
+			if (simulationSteps[*algorithmName] <= 0)
+			{
+				// robot did not finish
+				simulationSteps[*algorithmName] = stepsTaken;
+				positionInCompetition[*algorithmName] = 10;
+				// setting score to 0 without calculating.
+				simulationScores[currentHouse.name][*algorithmName] = 0;
+				algorithmName++;
+				continue;
+			}
 			score_params["actual_position_in_competition"] = ((positionInCompetition[*algorithmName] == 10) ? 10 : min(4,positionInCompetition[*algorithmName]));
 			score_params["winner_num_steps"] = winnerSteps;
 			score_params["this_num_steps"] = simulationSteps[*algorithmName];
