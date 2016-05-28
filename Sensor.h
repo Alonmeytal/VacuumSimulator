@@ -9,17 +9,19 @@
 #ifndef SENSOR_H_
 #define SENSOR_H_
 
+#include <memory>
+
 #include "AbstractSensor.h"
 #include "House.h"
 #include "Point.h"
 
 class Sensor: public AbstractSensor {
-	House * house;
-	Point * currentLocation;
+	unique_ptr<House> house;
+	unique_ptr<Point> currentLocation;
 public:
 	Sensor(House * h, Point * location) : house(h), currentLocation(location) { }
 	virtual SensorInformation sense() const;
-	virtual ~Sensor();
+	~Sensor() { house.release(); currentLocation.release(); };
 };
 
 #endif /* SENSOR_H_ */

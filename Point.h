@@ -22,7 +22,7 @@ public:
 	void down() { y--; }
 	void right() { x++; }
 	void left() { x--; }
-	virtual ~Point();
+	~Point() = default;
 };
 
 #endif /* POINT_H_ */

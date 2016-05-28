@@ -22,7 +22,6 @@ public:
         //assert(algorithmFactories.size()-1 == algorithmNames.size());
         algorithmNames.push_back(algorithmName);
     }
-    int loadAlgorithm(const string& path, const string& so_file_name_without_so_suffix);
     list<unique_ptr<AbstractAlgorithm>> getAlgorithms()const {
         list<unique_ptr<AbstractAlgorithm>> algorithms;
         for(auto algorithmFactoryFunc : algorithmFactories) {

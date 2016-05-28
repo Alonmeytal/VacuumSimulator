@@ -27,7 +27,6 @@ using namespace std;
 
 class Simulator {
 	map<string,int> settings;
-	//list<House> houses;
 	vector<House> houses;
 	list<unique_ptr<AbstractAlgorithm>> algorithms;
 	int (*score)(const map<string,int>&);

@@ -7,8 +7,3 @@
  */
 
 #include "Point.h"
-
-Point::~Point() {
-	// TODO Auto-generated destructor stub
-}
-

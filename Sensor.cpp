@@ -57,7 +57,3 @@ SensorInformation Sensor::sense() const{
 
 	return inf;
 }
-
-Sensor::~Sensor() {
-}
-

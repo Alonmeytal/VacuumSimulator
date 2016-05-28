@@ -23,7 +23,7 @@ House::House(string fileName) : House() {
 	}
 
 	// Reading house name
-	name = fileName.substr(fileName.find_last_of('/')+1,fileName.find_last_of('.')-2);
+	name = fileName.substr(fileName.find_last_of('/')+1,fileName.find_first_of('.')-fileName.find_last_of('/')-1);
 	getline(houseFileStream,row); // skipping name-description line.
 
 	int tempNumber;
@@ -66,22 +66,13 @@ House::House(string fileName) : House() {
 		throw runtime_error("line number 4 in house file shall be a positive number, found: " + row);
 	}
 
-	//houseFileStream.ignore();
 	// reading House.matrix from file.
-	//matrix = new char*[rows]; // assigning rows of char[], according to House.rows
-	
 	int i, j;
 	for (i = 0; i < rows; i++)
 	{
 		getline(houseFileStream, row); // reading current line from houseFileStream into $row
-		//matrix[i] = new char[cols]; // assigning row to memory, according to House.cols
 		if (houseFileStream.eof())
 		{
-			// house file was too short (didn't have enough rows).
-			//for (j = 0; j < cols; j++)
-			//{
-			//	matrix[i][j] = 'W'; // filling remaining rows with walls.
-			//}
 			matrix.push_back(string(cols, 'W'));
 		}
 		else
@@ -91,7 +82,6 @@ House::House(string fileName) : House() {
 			matrix.push_back(row);
 			for (j = 0; (j < cols) || (j < ((int) row.length())); j++)
 			{
-				//matrix[i][j] = row[j]; // copying value into house matrix.
 				if ((row[j] >= '1') && (row[j] <= '9'))
 				{
 					dirt += (row[j] - '0'); // cell contained dirt, accumulating it into House.dirt.
@@ -102,16 +92,6 @@ House::House(string fileName) : House() {
 				}
 
 			}
-			/*
-			if (((int) row.length()) < cols)
-			{
-				// row was shorter then needed, completing with walls.
-				for (j = row.length(); j < cols; j++)
-				{
-					matrix[i][j] = 'W';
-				}
-			}
-			*/
 		}
 	}
 
@@ -138,7 +118,6 @@ House::House(string fileName) : House() {
 				dockingPoint = Point(i,j);
 				dockingCounter++;
 			}
-			//else if (((matrix[i][j] < '0') && (matrix[i][j] > '9')) && ((matrix[i][j] != 'W') && (matrix[i][j] != ' ')))
 			else if((!isdigit(matrix[i][j])) && (matrix[i][j] != 'W') && (matrix[i][j] != ' '))
 			{
 				// character is not a valid character and thus should throw an exception
@@ -163,19 +142,6 @@ House::House(const House & otherHouse) : House() {
 	cols = otherHouse.cols;
 	rows = otherHouse.rows;
 	dirt = otherHouse.dirt;
-
-	// assigning and copying matrix. char-by-char \O.O/
-	/*
-	matrix = new char*[rows];
-	for (int i = 0; i < rows; i++)
-	{
-		matrix[i] = new char[cols];
-		for (int j = 0; j < cols; j++)
-		{
-			matrix[i][j] = otherHouse.matrix[i][j];
-		}
-	}
-	*/
 	matrix = otherHouse.matrix;
 	dockingPoint = Point(otherHouse.dockingPoint);
 }
